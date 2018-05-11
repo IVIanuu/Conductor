@@ -13,7 +13,10 @@ import com.ivianuu.conductor.internal.ClassUtils
  */
 abstract class ControllerChangeHandler {
 
-    internal var forceRemoveViewOnPush= false
+    open var removesFromViewOnPush = true
+
+    internal var forceRemoveViewOnPush = false
+
     private var hasBeenUsed = false
 
     /**
@@ -89,14 +92,6 @@ abstract class ControllerChangeHandler {
             throw RuntimeException(javaClass.toString() + " does not have a default constructor.")
         }
 
-    }
-
-    open fun removesFromViewOnPush(): Boolean {
-        return true
-    }
-
-    open fun setForceRemoveViewOnPush(force: Boolean) {
-        forceRemoveViewOnPush = force
     }
 
     internal class ChangeTransaction(
@@ -238,9 +233,7 @@ abstract class ControllerChangeHandler {
                             ChangeHandlerData(handler, isPush)
                 }
 
-                for (listener in listeners) {
-                    listener.onChangeStarted(to, from, isPush, container, handler)
-                }
+                listeners.forEach { it.onChangeStarted(to, from, isPush, container, handler) }
 
                 val toChangeType =
                     if (isPush) ControllerChangeType.PUSH_ENTER else ControllerChangeType.POP_ENTER
@@ -277,9 +270,7 @@ abstract class ControllerChangeHandler {
                                 to.changeEnded(handler, toChangeType)
                             }
 
-                            for (listener in listeners) {
-                                listener.onChangeCompleted(to, from, isPush, container, handler)
-                            }
+                            listeners.forEach { it.onChangeCompleted(to, from, isPush, container, handler) }
 
                             if (handler.forceRemoveViewOnPush && fromView != null) {
                                 val fromParent = fromView.parent
@@ -288,7 +279,7 @@ abstract class ControllerChangeHandler {
                                 }
                             }
 
-                            if (handler.removesFromViewOnPush() && from != null) {
+                            if (handler.removesFromViewOnPush && from != null) {
                                 from.needsAttach = false
                             }
                         }

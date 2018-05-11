@@ -40,14 +40,15 @@ internal class StringSparseArrayParceler : Parcelable {
     }
 
     companion object {
+        @JvmField
         val CREATOR: Parcelable.Creator<StringSparseArrayParceler> =
             object : Parcelable.Creator<StringSparseArrayParceler> {
                 override fun createFromParcel(`in`: Parcel): StringSparseArrayParceler {
                     return StringSparseArrayParceler(`in`)
                 }
 
-                override fun newArray(size: Int): Array<StringSparseArrayParceler> {
-                    return newArray(size)
+                override fun newArray(size: Int): Array<StringSparseArrayParceler?> {
+                    return arrayOfNulls(size)
                 }
             }
     }

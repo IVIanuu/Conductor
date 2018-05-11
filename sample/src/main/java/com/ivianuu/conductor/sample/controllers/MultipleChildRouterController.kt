@@ -23,7 +23,9 @@ class MultipleChildRouterController : BaseController() {
         childContainers.add(view.findViewById(R.id.container_2))
 
         for (childContainer in childContainers) {
-            val childRouter = getChildRouter(childContainer).setPopsLastView(false)
+            val childRouter = getChildRouter(childContainer).apply {
+                popsLastView = false
+            }
             if (!childRouter.hasRootController()) {
                 childRouter.setRoot(
                     RouterTransaction.with(

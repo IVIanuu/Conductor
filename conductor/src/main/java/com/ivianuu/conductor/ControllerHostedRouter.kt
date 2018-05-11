@@ -3,7 +3,6 @@ package com.ivianuu.conductor
 import android.app.Activity
 import android.content.Intent
 import android.content.IntentSender
-import android.content.IntentSender.SendIntentException
 import android.os.Bundle
 import android.support.v4.app.FragmentActivity
 import android.view.ViewGroup
@@ -42,9 +41,16 @@ internal class ControllerHostedRouter : Router {
         private set
     var tag: String? = null
         private set
-    private var isDetachFrozen = false
 
-    constructor() {}
+    internal var isDetachFrozen = false
+        set(value) {
+            field = value
+            for (transaction in backstack) {
+                transaction.controller.isDetachFrozen = value
+            }
+        }
+
+    constructor()
 
     constructor(hostId: Int, tag: String?) {
         this.hostId = hostId
@@ -56,15 +62,13 @@ internal class ControllerHostedRouter : Router {
             removeHost()
 
             if (container is ControllerChangeListener) {
-                addChangeListener(container as ControllerChangeListener)
+                addChangeListener(container)
             }
 
             hostController = controller
             this.container = container
 
-            for (transaction in backstack) {
-                transaction.controller.parentController = controller
-            }
+            backstack.forEach { it.controller.parentController = controller }
 
             watchContainerAttach()
         }
@@ -73,16 +77,18 @@ internal class ControllerHostedRouter : Router {
     fun removeHost() {
         val container = container
         if (container != null && container is ControllerChangeListener) {
-            removeChangeListener(container as ControllerChangeListener)
+            removeChangeListener(container)
         }
 
         val controllersToDestroy = destroyingControllers.toList()
+
         for (controller in controllersToDestroy) {
             val view = controller.view
             if (view != null) {
                 controller.detach(view, true, false)
             }
         }
+
         for (transaction in backstack) {
             val view = transaction.controller.view
             if (view != null) {
@@ -93,13 +99,6 @@ internal class ControllerHostedRouter : Router {
         prepareForContainerRemoval()
         hostController = null
         this.container = null
-    }
-
-    fun setDetachFrozen(frozen: Boolean) {
-        isDetachFrozen = frozen
-        for (transaction in backstack) {
-            transaction.controller.isDetachFrozen = frozen
-        }
     }
 
     override fun destroy(popViews: Boolean) {
@@ -119,16 +118,13 @@ internal class ControllerHostedRouter : Router {
         changeHandler: ControllerChangeHandler?
     ) {
         if (isDetachFrozen) {
-            for (transaction in newBackstack) {
-                transaction.controller.isDetachFrozen = true
-            }
+            newBackstack.forEach { it.controller.isDetachFrozen = true }
         }
         super.setBackstack(newBackstack, changeHandler)
     }
 
     override fun onActivityDestroyed(activity: Activity) {
         super.onActivityDestroyed(activity)
-
         removeHost()
     }
 
@@ -163,7 +159,6 @@ internal class ControllerHostedRouter : Router {
         )
     }
 
-    @Throws(SendIntentException::class)
     override fun startIntentSenderForResult(
         instanceId: String,
         intent: IntentSender,
@@ -198,14 +193,12 @@ internal class ControllerHostedRouter : Router {
 
     override fun saveInstanceState(outState: Bundle) {
         super.saveInstanceState(outState)
-
         outState.putInt(KEY_HOST_ID, hostId)
         outState.putString(KEY_TAG, tag)
     }
 
     override fun restoreInstanceState(savedInstanceState: Bundle) {
         super.restoreInstanceState(savedInstanceState)
-
         hostId = savedInstanceState.getInt(KEY_HOST_ID)
         tag = savedInstanceState.getString(KEY_TAG)
     }

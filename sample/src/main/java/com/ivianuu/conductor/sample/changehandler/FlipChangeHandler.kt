@@ -11,8 +11,8 @@ import android.view.animation.AccelerateDecelerateInterpolator
 import com.ivianuu.conductor.changehandler.AnimatorChangeHandler
 
 class FlipChangeHandler @JvmOverloads constructor(
-    private val flipDirection: FlipDirection = FlipDirection.RIGHT) : AnimatorChangeHandler(
-    DEFAULT_ANIMATION_DURATION) {
+    private val flipDirection: FlipDirection = FlipDirection.RIGHT
+) : AnimatorChangeHandler(DEFAULT_ANIMATION_DURATION) {
 
     enum class FlipDirection(
         internal val inStartRotation: Int,

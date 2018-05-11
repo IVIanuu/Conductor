@@ -4,6 +4,7 @@ import android.content.res.ColorStateList
 import android.os.Bundle
 import android.support.v4.content.ContextCompat
 import android.view.View
+import androidx.core.os.bundleOf
 import com.ivianuu.conductor.Controller
 import com.ivianuu.conductor.ControllerChangeHandler
 import com.ivianuu.conductor.RouterTransaction
@@ -15,7 +16,7 @@ import com.ivianuu.conductor.sample.changehandler.ArcFadeMoveChangeHandlerCompat
 import com.ivianuu.conductor.sample.changehandler.CircularRevealChangeHandlerCompat
 import com.ivianuu.conductor.sample.changehandler.FlipChangeHandler
 import com.ivianuu.conductor.sample.controllers.base.BaseController
-import com.ivianuu.conductor.sample.util.BundleBuilder
+
 import kotlinx.android.synthetic.main.controller_transition_demo.*
 
 class TransitionDemoController(args: Bundle) : BaseController(args) {
@@ -63,12 +64,7 @@ class TransitionDemoController(args: Bundle) : BaseController(args) {
         }
     }
 
-    constructor(index: Int) : this(
-        BundleBuilder(Bundle())
-            .putInt(KEY_INDEX, index)
-            .build()
-    ) {
-    }
+    constructor(index: Int) : this(bundleOf(KEY_INDEX to index))
 
     init {
         transitionDemo = TransitionDemo.fromIndex(args.getInt(KEY_INDEX))

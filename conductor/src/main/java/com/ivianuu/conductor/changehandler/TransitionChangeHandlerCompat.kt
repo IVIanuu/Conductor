@@ -17,6 +17,10 @@ open class TransitionChangeHandlerCompat : ControllerChangeHandler {
 
     lateinit var changeHandler: ControllerChangeHandler
 
+    override var removesFromViewOnPush: Boolean
+        get() = changeHandler.removesFromViewOnPush
+        set(value) { changeHandler.removesFromViewOnPush = value }
+
     constructor()
 
     /**
@@ -59,12 +63,7 @@ open class TransitionChangeHandlerCompat : ControllerChangeHandler {
 
         val className = bundle.getString(KEY_CHANGE_HANDLER_CLASS)
         changeHandler = ClassUtils.newInstance<ControllerChangeHandler>(className)!!
-
         changeHandler.restoreFromBundle(bundle.getBundle(KEY_HANDLER_STATE))
-    }
-
-    override fun removesFromViewOnPush(): Boolean {
-        return changeHandler.removesFromViewOnPush()
     }
 
     override fun copy(): ControllerChangeHandler {
@@ -79,10 +78,6 @@ open class TransitionChangeHandlerCompat : ControllerChangeHandler {
 
     override fun completeImmediately() {
         changeHandler.completeImmediately()
-    }
-
-    override fun setForceRemoveViewOnPush(force: Boolean) {
-        changeHandler.setForceRemoveViewOnPush(force)
     }
 
     companion object {

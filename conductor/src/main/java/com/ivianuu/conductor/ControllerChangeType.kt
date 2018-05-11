@@ -3,7 +3,7 @@ package com.ivianuu.conductor
 /**
  * All possible types of [Controller] changes to be used in [ControllerChangeHandler]s
  */
-enum class ControllerChangeType(var isPush: Boolean, var isEnter: Boolean) {
+enum class ControllerChangeType(val isPush: Boolean, val isEnter: Boolean) {
     /** The Controller is being pushed to the host container  */
     PUSH_ENTER(true, true),
 

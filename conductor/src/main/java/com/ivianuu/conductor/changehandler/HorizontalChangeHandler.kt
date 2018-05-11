@@ -11,7 +11,7 @@ import com.ivianuu.conductor.ControllerChangeHandler
 /**
  * An [AnimatorChangeHandler] that will slide the views left or right, depending on if it's a push or pop.
  */
-class HorizontalChangeHandler @JvmOverloads constructor(
+open class HorizontalChangeHandler @JvmOverloads constructor(
     animationDuration: Long = DEFAULT_ANIMATION_DURATION,
     removesFromViewOnPush: Boolean = true
 ) : AnimatorChangeHandler(animationDuration, removesFromViewOnPush) {
@@ -77,7 +77,7 @@ class HorizontalChangeHandler @JvmOverloads constructor(
     }
 
     override fun copy(): ControllerChangeHandler {
-        return HorizontalChangeHandler(animationDuration, removesFromViewOnPush())
+        return HorizontalChangeHandler(animationDuration, removesFromViewOnPush)
     }
 
 }

@@ -2,7 +2,6 @@ package com.ivianuu.conductor
 
 import android.content.Intent
 import android.content.IntentSender
-import android.content.IntentSender.SendIntentException
 import android.os.Bundle
 import android.support.v4.app.FragmentActivity
 import android.view.ViewGroup
@@ -30,7 +29,7 @@ class ActivityHostedRouter(
 
     init {
         if (container is ControllerChangeListener) {
-            addChangeListener(container as ControllerChangeListener)
+            addChangeListener(container)
         }
         this.container = container
 
@@ -76,7 +75,6 @@ class ActivityHostedRouter(
         lifecycleHandler.startActivityForResult(instanceId, intent, requestCode, options)
     }
 
-    @Throws(SendIntentException::class)
     override fun startIntentSenderForResult(
         instanceId: String, intent: IntentSender, requestCode: Int, fillInIntent: Intent?,
         flagsMask: Int, flagsValues: Int, extraFlags: Int, options: Bundle?

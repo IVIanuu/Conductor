@@ -36,5 +36,8 @@ dependencies {
     implementation Deps.supportAppCompat
     implementation Deps.supportDesign
     implementation Deps.supportRecyclerView
+
+    implementation Deps.ktx
+
     implementation project(':conductor')
 }

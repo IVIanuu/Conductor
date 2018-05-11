@@ -21,9 +21,6 @@ class ParentController : BaseController() {
     override val layoutRes: Int
         get() = R.layout.controller_parent
 
-    override fun onViewCreated(view: View) {
-    }
-
     override fun onChangeEnded(
         changeHandler: ControllerChangeHandler,
         changeType: ControllerChangeType
@@ -39,7 +36,9 @@ class ParentController : BaseController() {
         val frameId =
             resources!!.getIdentifier("child_content_" + (index + 1), "id", activity!!.packageName)
         val container = view!!.findViewById<View>(frameId) as ViewGroup
-        val childRouter = getChildRouter(container).setPopsLastView(true)
+        val childRouter = getChildRouter(container).apply {
+            popsLastView = true
+        }
 
         if (!childRouter.hasRootController()) {
             val childController = ChildController(
@@ -95,16 +94,15 @@ class ParentController : BaseController() {
             }
         }
 
-        if (childControllers != NUMBER_OF_CHILDREN || finishing) {
-            return true
+        return if (childControllers != NUMBER_OF_CHILDREN || finishing) {
+            true
         } else {
             finishing = true
-            return super.handleBack()
+            super.handleBack()
         }
     }
 
     companion object {
-
         private const val NUMBER_OF_CHILDREN = 5
     }
 

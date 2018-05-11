@@ -2,13 +2,14 @@ package com.ivianuu.conductor.sample.controllers
 
 import android.os.Bundle
 import android.view.View
+import androidx.core.os.bundleOf
 import com.ivianuu.conductor.ControllerChangeHandler
 import com.ivianuu.conductor.ControllerChangeType
 import com.ivianuu.conductor.RouterTransaction
 import com.ivianuu.conductor.changehandler.HorizontalChangeHandler
 import com.ivianuu.conductor.sample.R
 import com.ivianuu.conductor.sample.controllers.base.BaseController
-import com.ivianuu.conductor.sample.util.BundleBuilder
+
 import com.ivianuu.conductor.sample.util.ColorUtil
 import kotlinx.android.synthetic.main.controller_navigation_demo.*
 
@@ -28,21 +29,19 @@ class NavigationDemoController(args: Bundle) : BaseController(args) {
         HIDE;
 
         val displayUpModeForChild: DisplayUpMode
-            get() {
-                when (this) {
-                    HIDE -> return HIDE
-                    else -> return SHOW
+            get() = when (this) {
+                    HIDE -> HIDE
+                    else -> SHOW
                 }
-            }
+
     }
 
     constructor(index: Int, displayUpMode: DisplayUpMode) : this(
-        BundleBuilder(Bundle())
-            .putInt(KEY_INDEX, index)
-            .putInt(KEY_DISPLAY_UP_MODE, displayUpMode.ordinal)
-            .build()
-    ) {
-    }
+        bundleOf(
+            KEY_INDEX to index,
+            KEY_DISPLAY_UP_MODE to displayUpMode.ordinal
+        )
+    )
 
     init {
         index = args.getInt(KEY_INDEX)

@@ -62,22 +62,16 @@ internal class Backstack : Iterable<RouterTransaction> {
     }
 
     fun saveInstanceState(outState: Bundle) {
-        val entryBundles = mutableListOf<Bundle>()
-        for (entry in backstack) {
-            entryBundles.add(entry.saveInstanceState())
-        }
-
-        outState.putParcelableArrayList(KEY_ENTRIES, ArrayList(entryBundles))
+        outState.putParcelableArrayList(
+            KEY_ENTRIES,
+            ArrayList(backstack.map { it.saveInstanceState() })
+        )
     }
 
     fun restoreInstanceState(savedInstanceState: Bundle) {
-        val entryBundles = savedInstanceState
-            .getParcelableArrayList<Bundle>(KEY_ENTRIES)?.reversed()
-        if (entryBundles != null) {
-            for (transactionBundle in entryBundles) {
-                backstack.push(RouterTransaction(transactionBundle))
-            }
-        }
+        savedInstanceState.getParcelableArrayList<Bundle>(KEY_ENTRIES)
+            ?.reversed()
+            ?.forEach { backstack.push(RouterTransaction(it)) }
     }
 
     companion object {

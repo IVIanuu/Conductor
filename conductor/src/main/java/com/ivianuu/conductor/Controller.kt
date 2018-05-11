@@ -10,7 +10,6 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Parcelable
 import android.support.v4.app.FragmentActivity
-import android.text.TextUtils
 import android.util.SparseArray
 import android.view.*
 import com.ivianuu.conductor.internal.ClassUtils
@@ -40,13 +39,11 @@ abstract class Controller @JvmOverloads protected constructor(args: Bundle? = nu
     /**
      * Returns whether or not this Controller is currently in the process of being destroyed.
      */
-
     var isBeingDestroyed = false
         private set
     /**
      * Returns whether or not this Controller has been destroyed.
      */
-
     var isDestroyed = false
         private set
 
@@ -87,12 +84,13 @@ abstract class Controller @JvmOverloads protected constructor(args: Bundle? = nu
                 performOnRestoreInstanceState()
             }
         }
+
     /**
      * Return this Controller's View or `null` if it has not yet been created or has been
      * destroyed.
      */
     var view: View? = null
-        internal set
+        private set
 
     /**
      * Returns this Controller's parent Controller if it is a child Controller or `null` if
@@ -117,9 +115,7 @@ abstract class Controller @JvmOverloads protected constructor(args: Bundle? = nu
             if (field != value) {
                 field = value
 
-                for (router in childRouters) {
-                    router.setDetachFrozen(value)
-                }
+                childRouters.forEach { it.isDetachFrozen = value }
 
                 val view = view
                 if (!value && view != null && viewWasDetached) {
@@ -133,14 +129,12 @@ abstract class Controller @JvmOverloads protected constructor(args: Bundle? = nu
      * if the handler from the [RouterTransaction] should be used instead.
      */
     var overriddenPushHandler: ControllerChangeHandler? = null
-        private set
 
     /**
      * Returns the [ControllerChangeHandler] that should be used for popping this Controller, or null
      * if the handler from the [RouterTransaction] should be used instead.
      */
     var overriddenPopHandler: ControllerChangeHandler? = null
-        private set
 
     var retainViewMode = RetainViewMode.RELEASE_DETACH
         set(value) {
@@ -178,10 +172,7 @@ abstract class Controller @JvmOverloads protected constructor(args: Bundle? = nu
      * has not yet been attached to an Activity or if the Activity has been destroyed.
      */
     val applicationContext: Context?
-        get() {
-            val activity = activity
-            return activity?.applicationContext
-        }
+        get() = activity?.applicationContext
 
     /**
      * Returns the target Controller that was set with the [.setTargetController]
@@ -193,9 +184,14 @@ abstract class Controller @JvmOverloads protected constructor(args: Bundle? = nu
      * that Controllers enforce that their target Controller conform to a specific Interface.
      */
     var targetController: Controller?
-        get() = if (targetInstanceId != null) {
-            requireRouter().rootRouter.getControllerWithInstanceId(targetInstanceId!!)
-        } else null
+        get() {
+            val targetInstanceId = targetInstanceId
+            return if (targetInstanceId != null) {
+                requireRouter().rootRouter.getControllerWithInstanceId(targetInstanceId)
+            } else {
+                null
+            }
+        }
         set(target) {
             if (targetInstanceId != null) {
                 throw RuntimeException("Target controller already set. A controller's target may only be set once.")
@@ -225,7 +221,8 @@ abstract class Controller @JvmOverloads protected constructor(args: Bundle? = nu
      * in the same container unless a lot of care is taken to maintain order between them. Avoid using
      * the same container unless you have a great reason to do so (ex: ViewPagers).
      */
-    @JvmOverloads fun getChildRouter(container: ViewGroup, tag: String? = null): Router {
+    @JvmOverloads
+    fun getChildRouter(container: ViewGroup, tag: String? = null): Router {
         return getChildRouter(container, tag, true)!!
     }
 
@@ -239,13 +236,8 @@ abstract class Controller @JvmOverloads protected constructor(args: Bundle? = nu
     fun getChildRouter(container: ViewGroup, tag: String?, createIfNeeded: Boolean): Router? {
         val containerId = container.id
 
-        var childRouter: ControllerHostedRouter? = null
-        for (router in childRouters) {
-            if (router.hostId == containerId && TextUtils.equals(tag, router.tag)) {
-                childRouter = router
-                break
-            }
-        }
+        var childRouter = childRouters
+            .firstOrNull { it.hostId == containerId && tag == it.tag }
 
         if (childRouter == null) {
             if (createIfNeeded) {
@@ -254,7 +246,7 @@ abstract class Controller @JvmOverloads protected constructor(args: Bundle? = nu
                 childRouters.add(childRouter)
 
                 if (isPerformingExitTransition) {
-                    childRouter.setDetachFrozen(true)
+                    childRouter.isDetachFrozen = true
                 }
             }
         } else if (!childRouter.hasHost) {
@@ -275,31 +267,21 @@ abstract class Controller @JvmOverloads protected constructor(args: Bundle? = nu
         }
     }
 
-    /**
-     * Returns the Controller with the given instance id or `null` if no such Controller
-     * exists. May return the Controller itself or a matching descendant
-     */
     internal fun findController(instanceId: String): Controller? {
         if (this.instanceId == instanceId) {
             return this
         }
 
-        for (router in childRouters) {
-            val matchingChild = router.getControllerWithInstanceId(instanceId)
-            if (matchingChild != null) {
-                return matchingChild
-            }
-        }
-        return null
+        return childRouters
+            .map { it.getControllerWithInstanceId(instanceId) }
+            .firstOrNull()
     }
 
     /**
      * Returns all of this Controller's child Routers
      */
     fun getChildRouters(): List<Router> {
-        val routers = mutableListOf<Router>()
-        routers.addAll(childRouters)
-        return routers
+        return childRouters.toList()
     }
 
     /**
@@ -326,6 +308,9 @@ abstract class Controller @JvmOverloads protected constructor(args: Bundle? = nu
     ) {
     }
 
+    /**
+     * Called when this Controller is attach to its router
+     */
     protected open fun onCreate() {}
 
     /**
@@ -411,7 +396,6 @@ abstract class Controller @JvmOverloads protected constructor(args: Bundle? = nu
     /**
      * Calls startIntentSenderForResult(IntentSender, int, Intent, int, int, int, Bundle) from this Controller's host Activity.
      */
-    @Throws(IntentSender.SendIntentException::class)
     fun startIntentSenderForResult(
         intent: IntentSender, requestCode: Int, fillInIntent: Intent?, flagsMask: Int,
         flagsValues: Int, extraFlags: Int, options: Bundle?
@@ -460,7 +444,8 @@ abstract class Controller @JvmOverloads protected constructor(args: Bundle? = nu
      * {@see android.app.Activity#shouldShowRequestPermissionRationale(String)}
      */
     fun shouldShowRequestPermissionRationale(permission: String): Boolean {
-        return Build.VERSION.SDK_INT >= 23 && activity!!.shouldShowRequestPermissionRationale(permission)
+        return Build.VERSION.SDK_INT >= 23
+                && activity?.shouldShowRequestPermissionRationale(permission) ?: false
     }
 
     /**
@@ -473,33 +458,30 @@ abstract class Controller @JvmOverloads protected constructor(args: Bundle? = nu
     ) {
     }
 
+    /**
+     * Returns the view if attached or throws an exception
+     */
     fun requireView() = view ?: throw IllegalStateException("view is not attached")
 
+    /**
+     * Returns the activity if attached or throws an exception
+     */
     fun requireActivity() = activity ?: throw IllegalStateException("activity is not attached")
 
+    /**
+     * Returns the router if attached or throws an exception
+     */
     fun requireRouter() = router ?: throw IllegalStateException("router is not attached")
 
     /**
      * Should be overridden if this Controller needs to handle the back button being pressed.
      */
     open fun handleBack(): Boolean {
-        val childTransactions = mutableListOf<RouterTransaction>()
-
-        for (childRouter in childRouters) {
-            childTransactions.addAll(childRouter.getBackstack())
-        }
-
-        childTransactions.sortWith(Comparator { o1, o2 -> o2.transactionIndex - o1.transactionIndex })
-
-        for (transaction in childTransactions) {
-            val childController = transaction.controller
-
-            if (childController.isAttached && childController.requireRouter().handleBack()) {
-                return true
-            }
-        }
-
-        return false
+        return childRouters
+            .flatMap { it.backstack }
+            .sortedByDescending { it.transactionIndex }
+            .map { it.controller }
+            .any { it.isAttached && it.requireRouter().handleBack() }
     }
 
     /**
@@ -521,22 +503,6 @@ abstract class Controller @JvmOverloads protected constructor(args: Bundle? = nu
     private fun notifyLifecycleListeners(action: (LifecycleListener) -> Unit) {
         val lifecycleListeners = lifecycleListeners.toList()
         lifecycleListeners.forEach(action)
-    }
-
-    /**
-     * Overrides the [ControllerChangeHandler] that should be used for pushing this Controller. If this is a
-     * non-null value, it will be used instead of the handler from  the [RouterTransaction].
-     */
-    fun overridePushHandler(overriddenPushHandler: ControllerChangeHandler?) {
-        this.overriddenPushHandler = overriddenPushHandler
-    }
-
-    /**
-     * Overrides the [ControllerChangeHandler] that should be used for popping this Controller. If this is a
-     * non-null value, it will be used instead of the handler from  the [RouterTransaction].
-     */
-    fun overridePopHandler(overriddenPopHandler: ControllerChangeHandler?) {
-        this.overriddenPopHandler = overriddenPopHandler
     }
 
     /**
@@ -590,9 +556,7 @@ abstract class Controller @JvmOverloads protected constructor(args: Bundle? = nu
     internal fun prepareForHostDetach() {
         needsAttach = needsAttach || isAttached
 
-        for (router in childRouters) {
-            router.prepareForHostDetach()
-        }
+        childRouters.forEach { it.prepareForHostDetach() }
     }
 
     internal fun didRequestPermission(permission: String): Boolean {
@@ -649,9 +613,7 @@ abstract class Controller @JvmOverloads protected constructor(args: Bundle? = nu
 
     internal fun attach(view: View) {
         attachedToUnownedParent = router == null || view.parent != requireRouter().container
-        if (attachedToUnownedParent) {
-            return
-        }
+        if (attachedToUnownedParent) return
 
         hasSavedViewState = false
 
@@ -671,13 +633,11 @@ abstract class Controller @JvmOverloads protected constructor(args: Bundle? = nu
 
     internal fun detach(view: View, forceViewRefRemoval: Boolean, blockViewRefRemoval: Boolean) {
         if (!attachedToUnownedParent) {
-            for (router in childRouters) {
-                router.prepareForHostDetach()
-            }
+            childRouters.forEach { it.prepareForHostDetach() }
         }
 
-        val removeViewRef =
-            !blockViewRefRemoval && (forceViewRefRemoval || retainViewMode == RetainViewMode.RELEASE_DETACH || isBeingDestroyed)
+        val removeViewRef = !blockViewRefRemoval
+                && (forceViewRefRemoval || retainViewMode == RetainViewMode.RELEASE_DETACH || isBeingDestroyed)
 
         if (isAttached) {
             notifyLifecycleListeners { it.preDetach(this, view) }
@@ -719,9 +679,7 @@ abstract class Controller @JvmOverloads protected constructor(args: Bundle? = nu
 
             notifyLifecycleListeners { it.postDestroyView(this) }
 
-            for (childRouter in childRouters) {
-                childRouter.removeHost()
-            }
+            childRouters.forEach { it.removeHost() }
         }
 
         if (isBeingDestroyed) {
@@ -785,7 +743,7 @@ abstract class Controller @JvmOverloads protected constructor(args: Bundle? = nu
     private fun restoreChildControllerHosts() {
         for (childRouter in childRouters) {
             if (!childRouter.hasHost) {
-                val containerView = view!!.findViewById<View>(childRouter.hostId)
+                val containerView = view?.findViewById<View>(childRouter.hostId)
                 if (containerView != null && containerView is ViewGroup) {
                     childRouter.setHost(this, containerView)
                     childRouter.rebindIfNeeded()
@@ -817,14 +775,12 @@ abstract class Controller @JvmOverloads protected constructor(args: Bundle? = nu
 
         router?.unregisterForActivityResults(instanceId)
 
-        for (childRouter in childRouters) {
-            childRouter.destroy(false)
-        }
+        childRouters.forEach { it.destroy(false) }
 
         if (!isAttached) {
             removeViewReference()
         } else if (removeViews) {
-            detach(view!!, true, false)
+            view?.let { detach(it, true, false) }
         }
     }
 
@@ -878,13 +834,13 @@ abstract class Controller @JvmOverloads protected constructor(args: Bundle? = nu
         overriddenPushHandler?.let { outState.putBundle(KEY_OVERRIDDEN_PUSH_HANDLER, it.toBundle()) }
         overriddenPopHandler?.let { outState.putBundle(KEY_OVERRIDDEN_POP_HANDLER, it.toBundle()) }
 
-        val childBundles = mutableListOf<Bundle>()
-        for (childRouter in childRouters) {
-            val routerBundle = Bundle()
-            childRouter.saveInstanceState(routerBundle)
-            childBundles.add(routerBundle)
-        }
-        outState.putParcelableArrayList(KEY_CHILD_ROUTERS, ArrayList(childBundles))
+        outState.putParcelableArrayList(KEY_CHILD_ROUTERS, ArrayList(
+            childRouters.map {
+                val bundle = Bundle()
+                it.saveInstanceState(bundle)
+                bundle
+            }
+        ))
 
         val savedState = Bundle(javaClass.classLoader)
         onSaveInstanceState(savedState)
@@ -897,32 +853,40 @@ abstract class Controller @JvmOverloads protected constructor(args: Bundle? = nu
     }
 
     private fun restoreInstanceState(savedInstanceState: Bundle) {
-        viewState = savedInstanceState.getBundle(KEY_VIEW_STATE)?.apply {
-            classLoader = this@Controller.javaClass.classLoader
+        with(savedInstanceState) {
+            viewState = getBundle(KEY_VIEW_STATE)?.apply {
+                classLoader = this@Controller.javaClass.classLoader
+            }
+
+            instanceId = getString(KEY_INSTANCE_ID)
+            targetInstanceId = getString(KEY_TARGET_INSTANCE_ID)
+            requestedPermissions.addAll(getStringArrayList(KEY_REQUESTED_PERMISSIONS))
+
+            overriddenPushHandler = ControllerChangeHandler.fromBundle(
+                getBundle(KEY_OVERRIDDEN_PUSH_HANDLER)
+            )
+            overriddenPopHandler = ControllerChangeHandler.fromBundle(
+                getBundle(KEY_OVERRIDDEN_POP_HANDLER)
+            )
+
+            needsAttach = getBoolean(KEY_NEEDS_ATTACH)
+            retainViewMode = RetainViewMode.values()[getInt(KEY_RETAIN_VIEW_MODE, 0)]
+
+            val childBundles = getParcelableArrayList<Bundle>(KEY_CHILD_ROUTERS)
+
+            childBundles
+                .map { childBundle ->
+                    ControllerHostedRouter().apply {
+                        restoreInstanceState(childBundle)
+                    }
+                }
+                .forEach { childRouters.add(it) }
         }
 
-        instanceId = savedInstanceState.getString(KEY_INSTANCE_ID)
-        targetInstanceId = savedInstanceState.getString(KEY_TARGET_INSTANCE_ID)
-        requestedPermissions.addAll(savedInstanceState.getStringArrayList(KEY_REQUESTED_PERMISSIONS))
-        overriddenPushHandler = ControllerChangeHandler.fromBundle(
-            savedInstanceState.getBundle(KEY_OVERRIDDEN_PUSH_HANDLER)
-        )
-        overriddenPopHandler = ControllerChangeHandler.fromBundle(
-            savedInstanceState.getBundle(KEY_OVERRIDDEN_POP_HANDLER)
-        )
-        needsAttach = savedInstanceState.getBoolean(KEY_NEEDS_ATTACH)
-        retainViewMode = RetainViewMode.values()[savedInstanceState.getInt(KEY_RETAIN_VIEW_MODE, 0)]
-
-        val childBundles = savedInstanceState.getParcelableArrayList<Bundle>(KEY_CHILD_ROUTERS)
-        for (childBundle in childBundles!!) {
-            val childRouter = ControllerHostedRouter()
-            childRouter.restoreInstanceState(childBundle)
-            childRouters.add(childRouter)
+        this.savedInstanceState = savedInstanceState.getBundle(KEY_SAVED_STATE)?.also {
+            it.classLoader = javaClass.classLoader
         }
 
-        this.savedInstanceState = savedInstanceState.getBundle(KEY_SAVED_STATE)?.apply {
-            classLoader = this@Controller.javaClass.classLoader
-        }
         performOnRestoreInstanceState()
     }
 
@@ -943,9 +907,7 @@ abstract class Controller @JvmOverloads protected constructor(args: Bundle? = nu
     ) {
         if (!changeType.isEnter) {
             isPerformingExitTransition = true
-            for (router in childRouters) {
-                router.setDetachFrozen(true)
-            }
+            childRouters.forEach { it.isDetachFrozen = true }
         }
 
         onChangeStarted(changeHandler, changeType)
@@ -959,22 +921,21 @@ abstract class Controller @JvmOverloads protected constructor(args: Bundle? = nu
     ) {
         if (!changeType.isEnter) {
             isPerformingExitTransition = false
-            for (router in childRouters) {
-                router.setDetachFrozen(false)
-            }
+            childRouters.forEach { it.isDetachFrozen = false }
         }
 
         onChangeEnded(changeHandler, changeType)
 
         notifyLifecycleListeners { it.onChangeEnd(this, changeHandler, changeType) }
 
+        val destroyedView = destroyedView
         if (isBeingDestroyed && !viewIsAttached && !isAttached && destroyedView != null) {
-            val view = destroyedView!!.get()
+            val view = destroyedView.get()
             val container = requireRouter().container
             if (container != null && view != null && view.parent == container) {
                 container.removeView(view)
             }
-            destroyedView = null
+            this.destroyedView = null
         }
     }
 
@@ -1071,7 +1032,8 @@ abstract class Controller @JvmOverloads protected constructor(args: Bundle? = nu
         internal fun newInstance(bundle: Bundle): Controller {
             val className = bundle.getString(KEY_CLASS_NAME)
 
-            val cls = ClassUtils.classForName<Controller>(className!!, false)!!
+            val cls =
+                ClassUtils.classForName<Controller>(className, false)!!
             val constructors = cls.constructors
             val bundleConstructor = getBundleConstructor(constructors)
 
@@ -1085,7 +1047,7 @@ abstract class Controller @JvmOverloads protected constructor(args: Bundle? = nu
                     controller = bundleConstructor.newInstance(args) as Controller
                 } else {
 
-                    controller = getDefaultConstructor(constructors)!!.newInstance() as Controller
+                    controller = getDefaultConstructor(constructors)?.newInstance() as Controller
 
                     // Restore the args that existed before the last process death
                     if (args != null) {
@@ -1104,21 +1066,13 @@ abstract class Controller @JvmOverloads protected constructor(args: Bundle? = nu
         }
 
         private fun getDefaultConstructor(constructors: Array<Constructor<*>>): Constructor<*>? {
-            for (constructor in constructors) {
-                if (constructor.parameterTypes.isEmpty()) {
-                    return constructor
-                }
-            }
-            return null
+            return constructors.firstOrNull { it.parameterTypes.isEmpty() }
         }
 
         private fun getBundleConstructor(constructors: Array<Constructor<*>>): Constructor<*>? {
-            for (constructor in constructors) {
-                if (constructor.parameterTypes.size == 1 && constructor.parameterTypes[0] == Bundle::class.java) {
-                    return constructor
-                }
+            return constructors.firstOrNull {
+                it.parameterTypes.size == 1 && it.parameterTypes[0] == Bundle::class.java
             }
-            return null
         }
     }
 

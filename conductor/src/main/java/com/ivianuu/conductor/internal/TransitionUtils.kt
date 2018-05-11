@@ -77,10 +77,9 @@ object TransitionUtils {
 
     fun addTargets(transition: Transition, views: List<View>) {
         if (transition is TransitionSet) {
-            val set = transition as TransitionSet?
-            val numTransitions = set!!.transitionCount
+            val numTransitions = transition.transitionCount
             for (i in 0 until numTransitions) {
-                val child = set.getTransitionAt(i)
+                val child = transition.getTransitionAt(i)
                 addTargets(child, views)
             }
         } else if (!hasSimpleTarget(transition)) {

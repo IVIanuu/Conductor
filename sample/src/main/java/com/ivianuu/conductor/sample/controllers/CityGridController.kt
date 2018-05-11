@@ -9,13 +9,14 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.os.bundleOf
 import com.ivianuu.conductor.RouterTransaction
 import com.ivianuu.conductor.changehandler.FadeChangeHandler
 import com.ivianuu.conductor.changehandler.TransitionChangeHandlerCompat
 import com.ivianuu.conductor.sample.R
 import com.ivianuu.conductor.sample.changehandler.CityGridSharedElementTransitionChangeHandler
 import com.ivianuu.conductor.sample.controllers.base.BaseController
-import com.ivianuu.conductor.sample.util.BundleBuilder
+
 import com.ivianuu.conductor.sample.util.KtViewHolder
 import kotlinx.android.synthetic.main.controller_city_grid.*
 import kotlinx.android.synthetic.main.row_city_grid.view.*
@@ -31,11 +32,11 @@ class CityGridController(args: Bundle) : BaseController(args) {
         get() = R.layout.controller_city_grid
 
     constructor(title: String, dotColor: Int, fromPosition: Int) : this(
-        BundleBuilder(Bundle())
-            .putString(KEY_TITLE, title)
-            .putInt(KEY_DOT_COLOR, dotColor)
-            .putInt(KEY_FROM_POSITION, fromPosition)
-            .build()
+        bundleOf(
+            KEY_TITLE to title,
+            KEY_DOT_COLOR to dotColor,
+            KEY_FROM_POSITION to fromPosition
+        )
     )
 
     override fun onViewCreated(view: View) {

@@ -19,5 +19,5 @@ package com.ivianuu.conductor.sample
 import android.util.Log
 
 fun Any.d(m: () -> String) {
-    Log.d(this::class.java.simpleName, m())
+    Log.d(javaClass.simpleName, m())
 }

@@ -11,7 +11,7 @@ import com.ivianuu.conductor.ControllerChangeHandler
  * An [AnimatorChangeHandler] that will slide either slide a new View up or slide an old View down,
  * depending on whether a push or pop change is happening.
  */
-class VerticalChangeHandler @JvmOverloads constructor(
+open class VerticalChangeHandler @JvmOverloads constructor(
     animationDuration: Long = DEFAULT_ANIMATION_DURATION,
     removesFromViewOnPush: Boolean = true
 ) : AnimatorChangeHandler(animationDuration, removesFromViewOnPush) {
@@ -49,10 +49,12 @@ class VerticalChangeHandler @JvmOverloads constructor(
         return animator
     }
 
-    override fun resetFromView(from: View) {}
+    override fun resetFromView(from: View) {
+        from.translationY = 0f
+    }
 
     override fun copy(): ControllerChangeHandler {
-        return VerticalChangeHandler(animationDuration, removesFromViewOnPush())
+        return VerticalChangeHandler(animationDuration, removesFromViewOnPush)
     }
 
 }

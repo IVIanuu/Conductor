@@ -20,6 +20,7 @@ import com.ivianuu.conductor.ActivityHostedRouter
 import com.ivianuu.conductor.Router
 import kotlinx.android.parcel.Parcelize
 
+
 class LifecycleHandler : Fragment(), ActivityLifecycleCallbacks {
 
     lateinit var lifecycleActivity: FragmentActivity
@@ -119,7 +120,6 @@ class LifecycleHandler : Fragment(), ActivityLifecycleCallbacks {
 
     override fun onDetach() {
         super.onDetach()
-
         attached = false
         destroyRouters()
     }
@@ -275,8 +275,7 @@ class LifecycleHandler : Fragment(), ActivityLifecycleCallbacks {
         }
     }
 
-    override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle) {
-
+    override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {
     }
 
     override fun onActivityStarted(activity: Activity) {
@@ -359,7 +358,8 @@ class LifecycleHandler : Fragment(), ActivityLifecycleCallbacks {
             var lifecycleHandler: LifecycleHandler? = activeLifecycleHandlers[activity]
             if (lifecycleHandler == null) {
                 lifecycleHandler =
-                        activity.supportFragmentManager.findFragmentByTag(FRAGMENT_TAG) as LifecycleHandler?
+                        activity.supportFragmentManager
+                            .findFragmentByTag(FRAGMENT_TAG) as LifecycleHandler?
             }
 
             return lifecycleHandler

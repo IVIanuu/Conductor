@@ -22,9 +22,6 @@ abstract class AnimatorChangeHandler @JvmOverloads constructor(
     var animationDuration: Long
         private set
 
-    var removesFromViewOnPush: Boolean
-        private set
-
     private var canceled = false
     private var needsImmediateCompletion = false
     private var completed = false
@@ -68,10 +65,6 @@ abstract class AnimatorChangeHandler @JvmOverloads constructor(
         } else if (onAnimationReadyOrAbortedListener != null) {
             onAnimationReadyOrAbortedListener?.onReadyOrAborted()
         }
-    }
-
-    override fun removesFromViewOnPush(): Boolean {
-        return removesFromViewOnPush
     }
 
     /**
@@ -126,7 +119,7 @@ abstract class AnimatorChangeHandler @JvmOverloads constructor(
         }
     }
 
-    internal fun complete(
+    private fun complete(
         changeListener: ControllerChangeHandler.ControllerChangeCompletedListener,
         animatorListener: AnimatorListener?
     ) {
@@ -146,7 +139,7 @@ abstract class AnimatorChangeHandler @JvmOverloads constructor(
         onAnimationReadyOrAbortedListener = null
     }
 
-    internal fun performAnimation(
+    private fun performAnimation(
         container: ViewGroup,
         from: View?,
         to: View?,
@@ -210,6 +203,7 @@ abstract class AnimatorChangeHandler @JvmOverloads constructor(
         internal val addingToView: Boolean,
         internal val changeListener: ControllerChangeHandler.ControllerChangeCompletedListener
     ) : ViewTreeObserver.OnPreDrawListener {
+
         private var hasRun = false
 
         override fun onPreDraw(): Boolean {
@@ -218,7 +212,7 @@ abstract class AnimatorChangeHandler @JvmOverloads constructor(
             return true
         }
 
-        internal fun onReadyOrAborted() {
+        fun onReadyOrAborted() {
             if (!hasRun) {
                 hasRun = true
 

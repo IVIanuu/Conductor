@@ -36,13 +36,11 @@ abstract class TransitionChangeHandler : ControllerChangeHandler() {
 
     override fun onAbortPush(newHandler: ControllerChangeHandler, newTop: Controller?) {
         super.onAbortPush(newHandler, newTop)
-
         canceled = true
     }
 
     override fun completeImmediately() {
         super.completeImmediately()
-
         needsImmediateCompletion = true
     }
 
@@ -96,10 +94,6 @@ abstract class TransitionChangeHandler : ControllerChangeHandler() {
             })
     }
 
-    override fun removesFromViewOnPush(): Boolean {
-        return true
-    }
-
     /**
      * Called before a transition occurs. This can be used to reorder views, set their transition names, etc. The transition will begin
      * when `onTransitionPreparedListener` is called.
@@ -126,7 +120,7 @@ abstract class TransitionChangeHandler : ControllerChangeHandler() {
         transition: Transition?,
         isPush: Boolean
     ) {
-        if (from != null && (removesFromViewOnPush() || !isPush) && from.parent == container) {
+        if (from != null && (removesFromViewOnPush || !isPush) && from.parent == container) {
             container.removeView(from)
         }
         if (to != null && to.parent == null) {

@@ -23,22 +23,15 @@ open class CircularRevealChangeHandler : AnimatorChangeHandler {
 
     /**
      * Constructor that will create a circular reveal from the center of the fromView parameter.
-     * @param fromView The view from which the circular reveal should originate
-     * @param containerView The view that hosts fromView
-     * @param removesFromViewOnPush If true, the view being replaced will be removed from the view hierarchy on pushes
      */
     constructor(
         fromView: View,
         containerView: View,
         removesFromViewOnPush: Boolean
-    ) : this(fromView, containerView, AnimatorChangeHandler.DEFAULT_ANIMATION_DURATION, true)
+    ) : this(fromView, containerView, AnimatorChangeHandler.DEFAULT_ANIMATION_DURATION, removesFromViewOnPush)
 
     /**
      * Constructor that will create a circular reveal from the center of the fromView parameter.
-     * @param fromView The view from which the circular reveal should originate
-     * @param containerView The view that hosts fromView
-     * @param duration The duration of the animation
-     * @param removesFromViewOnPush If true, the view being replaced will be removed from the view hierarchy on pushes
      */
     @JvmOverloads constructor(
         fromView: View,
@@ -62,9 +55,6 @@ open class CircularRevealChangeHandler : AnimatorChangeHandler {
 
     /**
      * Constructor that will create a circular reveal from the center point passed in.
-     * @param cx The center's x-axis
-     * @param cy The center's y-axis
-     * @param removesFromViewOnPush If true, the view being replaced will be removed from the view hierarchy on pushes
      */
     constructor(cx: Int, cy: Int, removesFromViewOnPush: Boolean) : this(
         cx,
@@ -77,10 +67,6 @@ open class CircularRevealChangeHandler : AnimatorChangeHandler {
 
     /**
      * Constructor that will create a circular reveal from the center point passed in.
-     * @param cx The center's x-axis
-     * @param cy The center's y-axis
-     * @param duration The duration of the animation
-     * @param removesFromViewOnPush If true, the view being replaced will be removed from the view hierarchy on pushes
      */
     @JvmOverloads constructor(
         cx: Int,
@@ -124,30 +110,7 @@ open class CircularRevealChangeHandler : AnimatorChangeHandler {
     }
 
     companion object {
-
-        private val KEY_CX = "CircularRevealChangeHandler.cx"
-        private val KEY_CY = "CircularRevealChangeHandler.cy"
+        private const val KEY_CX = "CircularRevealChangeHandler.cx"
+        private const val KEY_CY = "CircularRevealChangeHandler.cy"
     }
 }
-/**
- * Constructor that will create a circular reveal from the center of the fromView parameter.
- * @param fromView The view from which the circular reveal should originate
- * @param containerView The view that hosts fromView
- */
-/**
- * Constructor that will create a circular reveal from the center of the fromView parameter.
- * @param fromView The view from which the circular reveal should originate
- * @param containerView The view that hosts fromView
- * @param duration The duration of the animation
- */
-/**
- * Constructor that will create a circular reveal from the center point passed in.
- * @param cx The center's x-axis
- * @param cy The center's y-axis
- */
-/**
- * Constructor that will create a circular reveal from the center point passed in.
- * @param cx The center's x-axis
- * @param cy The center's y-axis
- * @param duration The duration of the animation
- */

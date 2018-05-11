@@ -11,7 +11,7 @@ import com.ivianuu.conductor.ControllerChangeHandler
 /**
  * An [AnimatorChangeHandler] that will cross fade two views
  */
-class FadeChangeHandler @JvmOverloads constructor(
+open class FadeChangeHandler @JvmOverloads constructor(
     animationDuration: Long = DEFAULT_ANIMATION_DURATION,
     removesFromViewOnPush: Boolean = true
 ) : AnimatorChangeHandler(animationDuration, removesFromViewOnPush) {
@@ -29,7 +29,7 @@ class FadeChangeHandler @JvmOverloads constructor(
             animator.play(ObjectAnimator.ofFloat<View>(to, View.ALPHA, start, 1f))
         }
 
-        if (from != null && (!isPush || removesFromViewOnPush())) {
+        if (from != null && (!isPush || removesFromViewOnPush)) {
             animator.play(ObjectAnimator.ofFloat<View>(from, View.ALPHA, 0f))
         }
 
@@ -41,7 +41,7 @@ class FadeChangeHandler @JvmOverloads constructor(
     }
 
     override fun copy(): ControllerChangeHandler {
-        return FadeChangeHandler(animationDuration, removesFromViewOnPush())
+        return FadeChangeHandler(animationDuration, removesFromViewOnPush)
     }
 
     private companion object {

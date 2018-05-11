@@ -7,9 +7,10 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.os.bundleOf
 import com.ivianuu.conductor.sample.R
 import com.ivianuu.conductor.sample.controllers.base.BaseController
-import com.ivianuu.conductor.sample.util.BundleBuilder
+
 import com.ivianuu.conductor.sample.util.KtViewHolder
 import kotlinx.android.synthetic.main.controller_city_detail.*
 import kotlinx.android.synthetic.main.row_city_header.*
@@ -23,10 +24,10 @@ class CityDetailController(args: Bundle) : BaseController(args) {
     override val title = args.getString(KEY_TITLE)
 
     constructor(imageDrawableRes: Int, title: String) : this(
-        BundleBuilder(Bundle())
-            .putInt(KEY_IMAGE, imageDrawableRes)
-            .putString(KEY_TITLE, title)
-            .build()
+        bundleOf(
+            KEY_IMAGE to imageDrawableRes,
+            KEY_TITLE to title
+        )
     )
 
     override fun onViewCreated(view: View) {

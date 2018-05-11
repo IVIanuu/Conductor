@@ -8,10 +8,10 @@ internal class ViewAttachHandler(private val attachListener: ViewAttachListener)
     OnAttachStateChangeListener {
 
     private var rootAttached = false
-    internal var childrenAttached = false
+    private var childrenAttached = false
     private var activityStopped = false
     private var reportedState = ReportedState.VIEW_DETACHED
-    internal var childOnAttachStateChangeListener: OnAttachStateChangeListener? = null
+    private var childOnAttachStateChangeListener: OnAttachStateChangeListener? = null
 
     private enum class ReportedState {
         VIEW_DETACHED,
@@ -111,7 +111,7 @@ internal class ViewAttachHandler(private val attachListener: ViewAttachListener)
         }
 
         childOnAttachStateChangeListener = object : OnAttachStateChangeListener {
-            internal var attached = false
+            private var attached = false
 
             override fun onViewAttachedToWindow(v: View) {
                 if (!attached) {
@@ -124,7 +124,9 @@ internal class ViewAttachHandler(private val attachListener: ViewAttachListener)
 
             override fun onViewDetachedFromWindow(v: View) {}
         }
-        findDeepestChild(view).addOnAttachStateChangeListener(childOnAttachStateChangeListener)
+
+        findDeepestChild(view)
+            .addOnAttachStateChangeListener(childOnAttachStateChangeListener)
     }
 
     private fun findDeepestChild(viewGroup: ViewGroup): View {

@@ -8,23 +8,14 @@ import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
 import com.ivianuu.conductor.changehandler.SharedElementTransitionChangeHandler
-import java.util.*
 
 @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-class CityGridSharedElementTransitionChangeHandler : SharedElementTransitionChangeHandler {
-
-    private val names: ArrayList<String>
-
-    constructor() {
-        names = ArrayList()
-    }
-
-    constructor(waitForTransitionNames: List<String>) {
-        names = ArrayList(waitForTransitionNames)
-    }
+class CityGridSharedElementTransitionChangeHandler @JvmOverloads constructor(
+    private val names: MutableList<String> = mutableListOf()
+): SharedElementTransitionChangeHandler() {
 
     override fun saveToBundle(bundle: Bundle) {
-        bundle.putStringArrayList(KEY_WAIT_FOR_TRANSITION_NAMES, names)
+        bundle.putStringArrayList(KEY_WAIT_FOR_TRANSITION_NAMES, ArrayList(names))
     }
 
     override fun restoreFromBundle(bundle: Bundle) {
@@ -76,10 +67,11 @@ class CityGridSharedElementTransitionChangeHandler : SharedElementTransitionChan
         to: View?,
         isPush: Boolean
     ) {
-        for (name in names) {
-            addSharedElement(name)
-            waitOnSharedElementNamed(name)
-        }
+        names
+            .forEach {
+                addSharedElement(it)
+                waitOnSharedElementNamed(it)
+            }
     }
 
     companion object {
