@@ -24,9 +24,9 @@ class DialogController(args: Bundle) : BaseController(args) {
         tv_description!!.text = args.getCharSequence(KEY_DESCRIPTION)
         tv_description!!.movementMethod = LinkMovementMethod.getInstance()
 
-        dismiss.setOnClickListener {  router!!.popController(this) }
+        dismiss.setOnClickListener {  requireRouter().popController(this) }
 
-        dialog_window.setOnClickListener { router!!.popController(this) }
+        dialog_window.setOnClickListener { requireRouter().popController(this) }
     }
 
     companion object {

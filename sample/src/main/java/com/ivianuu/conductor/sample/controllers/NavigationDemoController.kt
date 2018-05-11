@@ -58,7 +58,7 @@ class NavigationDemoController(args: Bundle) : BaseController(args) {
         tv_title!!.text = resources!!.getString(R.string.navigation_title, index)
 
         btn_next.setOnClickListener {
-            router!!.pushController(
+            requireRouter().pushController(
                 RouterTransaction.with(
                     NavigationDemoController(
                         index + 1,
@@ -71,12 +71,12 @@ class NavigationDemoController(args: Bundle) : BaseController(args) {
         }
 
         btn_up.setOnClickListener {
-            router!!.popToTag(TAG_UP_TRANSACTION)
+            requireRouter().popToTag(TAG_UP_TRANSACTION)
 
         }
 
         btn_pop_to_root.setOnClickListener {
-            router!!.popToRoot()
+            requireRouter().popToRoot()
         }
     }
 

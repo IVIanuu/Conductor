@@ -15,7 +15,7 @@ class DragDismissController : BaseController() {
     private val dragDismissListener = object : ElasticDragDismissCallback() {
         override fun onDragDismissed() {
             overridePopHandler(ScaleFadeChangeHandler())
-            router!!.popController(this@DragDismissController)
+            requireRouter().popController(this@DragDismissController)
         }
     }
 

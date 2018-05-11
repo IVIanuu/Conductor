@@ -65,7 +65,7 @@ class ParentController : BaseController() {
                             if (index > 0) {
                                 removeChild(index - 1)
                             } else {
-                                router!!.popController(this@ParentController)
+                                requireRouter().popController(this@ParentController)
                             }
                         }
                     }

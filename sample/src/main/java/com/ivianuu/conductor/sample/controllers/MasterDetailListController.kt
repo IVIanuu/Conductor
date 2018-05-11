@@ -76,7 +76,7 @@ class MasterDetailListController : BaseController() {
         if (twoPaneView) {
             getChildRouter(detail_container!!).setRoot(RouterTransaction.with(controller))
         } else {
-            router!!.pushController(
+            requireRouter().pushController(
                 RouterTransaction.with(controller)
                     .pushChangeHandler(HorizontalChangeHandler())
                     .popChangeHandler(HorizontalChangeHandler())

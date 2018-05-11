@@ -91,21 +91,21 @@ class TransitionDemoController(args: Bundle) : BaseController(args) {
             buttonColor = TransitionDemo.fromIndex(0).colorId
         }
 
-        btn_next!!.backgroundTintList = ColorStateList.valueOf(
+        btn_next.backgroundTintList = ColorStateList.valueOf(
             ContextCompat.getColor(
                 activity!!,
                 buttonColor
             )
         )
-        tv_title!!.text = transitionDemo.title
+        tv_title.text = transitionDemo.title
 
         btn_next.setOnClickListener {
             val nextIndex = transitionDemo.ordinal + 1
 
             if (nextIndex < TransitionDemo.values().size) {
-                router!!.pushController(getRouterTransaction(nextIndex, this))
+                requireRouter().pushController(getRouterTransaction(nextIndex, this))
             } else {
-                router!!.popToRoot()
+                requireRouter().popToRoot()
             }
 
         }

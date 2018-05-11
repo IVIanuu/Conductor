@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Intent
 import android.content.IntentSender
 import android.os.Bundle
+import android.support.v4.app.FragmentActivity
 import android.view.*
 import com.ivianuu.conductor.Controller.LifecycleListener
 import com.ivianuu.conductor.ControllerChangeHandler.ChangeTransaction
@@ -35,7 +36,7 @@ abstract class Router {
      * Returns this Router's host Activity or `null` if it has either not yet been attached to
      * an Activity or if the Activity has been destroyed.
      */
-    abstract val activity: Activity?
+    abstract val activity: FragmentActivity?
 
     val containerId: Int
         get() = container?.id ?: 0

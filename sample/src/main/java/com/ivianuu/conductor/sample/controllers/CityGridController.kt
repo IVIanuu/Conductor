@@ -69,7 +69,7 @@ class CityGridController(args: Bundle) : BaseController(args) {
         names.add(imageTransitionName)
         names.add(titleTransitionName)
 
-        router!!.pushController(
+        requireRouter().pushController(
             RouterTransaction.with(CityDetailController(model.drawableRes, model.title))
                 .pushChangeHandler(
                     TransitionChangeHandlerCompat(

@@ -9,6 +9,7 @@ import android.content.res.Resources
 import android.os.Build
 import android.os.Bundle
 import android.os.Parcelable
+import android.support.v4.app.FragmentActivity
 import android.text.TextUtils
 import android.util.SparseArray
 import android.view.*
@@ -157,7 +158,7 @@ abstract class Controller @JvmOverloads protected constructor(args: Bundle? = nu
      * Returns the host Activity of this Controller's [Router] or `null` if this
      * Controller has not yet been attached to an Activity or if the Activity has been destroyed.
      */
-    val activity: Activity?
+    val activity: FragmentActivity?
         get() = router?.activity
 
     /**
@@ -466,6 +467,12 @@ abstract class Controller @JvmOverloads protected constructor(args: Bundle? = nu
         grantResults: IntArray
     ) {
     }
+
+    fun requireView() = view ?: throw IllegalStateException("view is not attached")
+
+    fun requireActivity() = activity ?: throw IllegalStateException("activity is not attached")
+
+    fun requireRouter() = router ?: throw IllegalStateException("router is not attached")
 
     /**
      * Should be overridden if this Controller needs to handle the back button being pressed.
@@ -988,7 +995,7 @@ abstract class Controller @JvmOverloads protected constructor(args: Bundle? = nu
     enum class RetainViewMode {
         /** The Controller will release its reference to its view as soon as it is detached.  */
         RELEASE_DETACH,
-        /** The Controller will retain its reference to its view when detached, but will still release the reference when a config change occurs.  */
+        /** The Controller will retain its reference to its view when detached.  */
         RETAIN_DETACH
     }
 

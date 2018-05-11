@@ -108,5 +108,5 @@ abstract class BaseController : Controller, LayoutContainer {
         d { "on restore instance state" }
     }
 
-    protected abstract fun onViewCreated(view: View)
+    protected open fun onViewCreated(view: View) { }
 }

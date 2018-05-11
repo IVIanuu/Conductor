@@ -127,7 +127,7 @@ class HomeController : BaseController() {
             FadeChangeHandler()
         ) else FadeChangeHandler()
 
-        router!!
+        requireRouter()
             .pushController(
                 RouterTransaction.with(DialogController("Conductor", description))
                     .pushChangeHandler(pushHandler)
@@ -138,7 +138,7 @@ class HomeController : BaseController() {
 
     fun onModelRowClick(model: DemoModel?, position: Int) {
         when (model) {
-            HomeController.DemoModel.NAVIGATION -> router!!.pushController(
+            HomeController.DemoModel.NAVIGATION -> requireRouter().pushController(
                 RouterTransaction.with(
                     NavigationDemoController(
                         0,
@@ -149,13 +149,13 @@ class HomeController : BaseController() {
                     .popChangeHandler(FadeChangeHandler())
                     .tag(NavigationDemoController.TAG_UP_TRANSACTION)
             )
-            HomeController.DemoModel.TRANSITIONS -> router!!.pushController(
+            HomeController.DemoModel.TRANSITIONS -> requireRouter().pushController(
                 TransitionDemoController.getRouterTransaction(
                     0,
                     this
                 )
             )
-            HomeController.DemoModel.CHILD_CONTROLLERS -> router!!.pushController(
+            HomeController.DemoModel.CHILD_CONTROLLERS -> requireRouter().pushController(
                 RouterTransaction.with(ParentController())
                     .pushChangeHandler(FadeChangeHandler())
                     .popChangeHandler(FadeChangeHandler())
@@ -166,7 +166,7 @@ class HomeController : BaseController() {
                 val dotSharedElementName =
                     resources!!.getString(R.string.transition_tag_dot_indexed, position)
 
-                router!!.pushController(
+                requireRouter().pushController(
                     RouterTransaction.with(CityGridController(model.title, model.color, position))
                         .pushChangeHandler(
                             ArcFadeMoveChangeHandlerCompat(
@@ -182,17 +182,17 @@ class HomeController : BaseController() {
                         )
                 )
             }
-            HomeController.DemoModel.DRAG_DISMISS -> router!!.pushController(
+            HomeController.DemoModel.DRAG_DISMISS -> requireRouter().pushController(
                 RouterTransaction.with(DragDismissController())
                     .pushChangeHandler(FadeChangeHandler(false))
                     .popChangeHandler(FadeChangeHandler())
             )
-            HomeController.DemoModel.MULTIPLE_CHILD_ROUTERS -> router!!.pushController(
+            HomeController.DemoModel.MULTIPLE_CHILD_ROUTERS -> requireRouter().pushController(
                 RouterTransaction.with(MultipleChildRouterController())
                     .pushChangeHandler(FadeChangeHandler())
                     .popChangeHandler(FadeChangeHandler())
             )
-            HomeController.DemoModel.MASTER_DETAIL -> router!!.pushController(
+            HomeController.DemoModel.MASTER_DETAIL -> requireRouter().pushController(
                 RouterTransaction.with(MasterDetailListController())
                     .pushChangeHandler(FadeChangeHandler())
                     .popChangeHandler(FadeChangeHandler())

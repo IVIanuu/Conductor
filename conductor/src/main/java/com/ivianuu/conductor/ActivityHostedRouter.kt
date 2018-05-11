@@ -5,6 +5,7 @@ import android.content.Intent
 import android.content.IntentSender
 import android.content.IntentSender.SendIntentException
 import android.os.Bundle
+import android.support.v4.app.FragmentActivity
 import android.view.ViewGroup
 
 import com.ivianuu.conductor.ControllerChangeHandler.ControllerChangeListener
@@ -16,7 +17,7 @@ class ActivityHostedRouter(
     container: ViewGroup
 ) : Router() {
 
-    override val activity: Activity
+    override val activity: FragmentActivity
         get() = lifecycleHandler.lifecycleActivity
 
     override val hasHost = true
