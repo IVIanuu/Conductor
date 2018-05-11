@@ -41,7 +41,6 @@ class LifecycleHandler : Fragment(), ActivityLifecycleCallbacks {
 
     init {
         setHasOptionsMenu(true)
-        retainInstance = true
     }
 
     fun getRouter(container: ViewGroup, savedInstanceState: Bundle?): Router {
