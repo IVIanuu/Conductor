@@ -4,7 +4,7 @@ import android.view.View
 import android.view.View.OnAttachStateChangeListener
 import android.view.ViewGroup
 
-class ViewAttachHandler(private val attachListener: ViewAttachListener) :
+internal class ViewAttachHandler(private val attachListener: ViewAttachListener) :
     OnAttachStateChangeListener {
 
     private var rootAttached = false

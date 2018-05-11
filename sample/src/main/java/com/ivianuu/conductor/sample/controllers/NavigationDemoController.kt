@@ -1,11 +1,7 @@
 package com.ivianuu.conductor.sample.controllers
 
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
-import android.widget.TextView
-
 import com.ivianuu.conductor.ControllerChangeHandler
 import com.ivianuu.conductor.ControllerChangeType
 import com.ivianuu.conductor.RouterTransaction
@@ -14,7 +10,6 @@ import com.ivianuu.conductor.sample.R
 import com.ivianuu.conductor.sample.controllers.base.BaseController
 import com.ivianuu.conductor.sample.util.BundleBuilder
 import com.ivianuu.conductor.sample.util.ColorUtil
-
 import kotlinx.android.synthetic.main.controller_navigation_demo.*
 
 class NavigationDemoController(args: Bundle) : BaseController(args) {

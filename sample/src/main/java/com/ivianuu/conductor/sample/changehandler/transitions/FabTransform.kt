@@ -24,30 +24,23 @@ import android.animation.AnimatorListenerAdapter
 import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
 import android.annotation.TargetApi
-import android.graphics.Bitmap
 import android.graphics.Outline
 import android.graphics.Rect
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
 import android.os.Build
-import android.support.annotation.ColorInt
-import android.support.annotation.DrawableRes
 import android.support.v4.content.ContextCompat
 import android.transition.Transition
 import android.transition.TransitionValues
 import android.view.View
+import android.view.View.MeasureSpec.makeMeasureSpec
 import android.view.ViewAnimationUtils
 import android.view.ViewGroup
 import android.view.ViewOutlineProvider
 import android.view.ViewTreeObserver.OnPreDrawListener
-import android.view.animation.Interpolator
-
 import com.ivianuu.conductor.sample.util.AnimUtils
-
-import java.util.ArrayList
-
-import android.view.View.MeasureSpec.makeMeasureSpec
+import java.util.*
 
 /**
  * A transition between a FAB & another surface using a circular reveal moving along an arc.
@@ -116,7 +109,7 @@ class FabTransform(private val color: Int, private val icon: Int) : Transition()
         view.overlay.add(fabColor)
 
         // Add an icon overlay again to fake the appearance of the FAB
-        val fabIcon = ContextCompat.getDrawable(sceneRoot.context, icon).mutate()
+        val fabIcon = ContextCompat.getDrawable(sceneRoot.context, icon)!!.mutate()
         val iconLeft = (dialogBounds.width() - fabIcon.intrinsicWidth) / 2
         val iconTop = (dialogBounds.height() - fabIcon.intrinsicHeight) / 2
         fabIcon.setBounds(

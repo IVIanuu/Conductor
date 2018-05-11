@@ -3,6 +3,7 @@ package com.ivianuu.conductor.internal
 import android.annotation.TargetApi
 import android.app.Activity
 import android.app.Application.ActivityLifecycleCallbacks
+import android.arch.lifecycle.ViewModelStore
 import android.content.Context
 import android.content.Intent
 import android.content.IntentSender
@@ -40,6 +41,7 @@ class LifecycleHandler : Fragment(), ActivityLifecycleCallbacks {
 
     init {
         setHasOptionsMenu(true)
+        retainInstance = true
     }
 
     fun getRouter(container: ViewGroup, savedInstanceState: Bundle?): Router {
@@ -132,7 +134,8 @@ class LifecycleHandler : Fragment(), ActivityLifecycleCallbacks {
 
             for (i in pendingPermissionRequests.indices.reversed()) {
                 val request = pendingPermissionRequests.removeAt(i)
-                requestPermissions(request.instanceId, request.permissions, request.requestCode)
+                requestPermissions(request.instanceId,
+                    request.permissions.toTypedArray(), request.requestCode)
             }
         }
     }
@@ -269,7 +272,7 @@ class LifecycleHandler : Fragment(), ActivityLifecycleCallbacks {
             pendingPermissionRequests.add(
                 PendingPermissionRequest(
                     instanceId,
-                    permissions,
+                    permissions.toList(),
                     requestCode
                 )
             )
@@ -327,31 +330,11 @@ class LifecycleHandler : Fragment(), ActivityLifecycleCallbacks {
     }
 
     @Parcelize
-    data class PendingPermissionRequest(
-        internal val instanceId: String,
-        internal val permissions: Array<String>,
-        internal val requestCode: Int
-    ) : Parcelable {
-        override fun equals(other: Any?): Boolean {
-            if (this == other) return true
-            if (javaClass != other?.javaClass) return false
-
-            other as PendingPermissionRequest
-
-            if (instanceId != other.instanceId) return false
-            if (!Arrays.equals(permissions, other.permissions)) return false
-            if (requestCode != other.requestCode) return false
-
-            return true
-        }
-
-        override fun hashCode(): Int {
-            var result = instanceId.hashCode()
-            result = 31 * result + Arrays.hashCode(permissions)
-            result = 31 * result + requestCode
-            return result
-        }
-    }
+    internal data class PendingPermissionRequest(
+        val instanceId: String,
+        val permissions: List<String>,
+        val requestCode: Int
+    ) : Parcelable
 
     companion object {
         private const val FRAGMENT_TAG = "com.ivianuu.conductor.LifecycleHandler"

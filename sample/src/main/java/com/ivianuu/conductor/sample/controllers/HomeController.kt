@@ -4,7 +4,6 @@ import android.content.Intent
 import android.graphics.PorterDuff.Mode
 import android.net.Uri
 import android.os.Bundle
-import android.support.annotation.ColorRes
 import android.support.v4.content.ContextCompat
 import android.support.v4.view.ViewCompat
 import android.support.v7.widget.LinearLayoutManager
@@ -15,20 +14,11 @@ import android.text.Spanned
 import android.text.style.AbsoluteSizeSpan
 import android.text.style.URLSpan
 import android.util.Log
-import android.view.LayoutInflater
-import android.view.Menu
-import android.view.MenuInflater
-import android.view.MenuItem
-import android.view.View
-import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.TextView
-
+import android.view.*
 import com.ivianuu.conductor.ControllerChangeHandler
 import com.ivianuu.conductor.ControllerChangeType
 import com.ivianuu.conductor.RouterTransaction
 import com.ivianuu.conductor.changehandler.FadeChangeHandler
-import com.ivianuu.conductor.changehandler.HorizontalChangeHandler
 import com.ivianuu.conductor.changehandler.TransitionChangeHandlerCompat
 import com.ivianuu.conductor.sample.R
 import com.ivianuu.conductor.sample.changehandler.ArcFadeMoveChangeHandlerCompat
@@ -44,7 +34,7 @@ class HomeController : BaseController() {
     override val title: String?
         get() = "Conductor Demos"
 
-    enum class DemoModel private constructor(internal var title: String, @param:ColorRes @field:ColorRes internal var color: Int) {
+    enum class DemoModel(val title: String, val color: Int) {
         NAVIGATION("Navigation Demos", R.color.red_300),
         TRANSITIONS("Transition Demos", R.color.blue_grey_300),
         SHARED_ELEMENT_TRANSITIONS("Shared Element Demos", R.color.purple_300),
@@ -60,25 +50,6 @@ class HomeController : BaseController() {
         setHasOptionsMenu(true)
     }
 
-    override fun onCreate() {
-        super.onCreate()
-        log("on create")
-    }
-
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup,
-        savedViewState: Bundle?
-    ): View {
-        log("on create view")
-        return super.onCreateView(inflater, container, savedViewState)
-    }
-
-    override fun onAttach(view: View) {
-        super.onAttach(view)
-        log("on attach")
-    }
-
     override fun onViewCreated(view: View) {
         recycler_view.setHasFixedSize(true)
         recycler_view.layoutManager = LinearLayoutManager(view.context)
@@ -90,43 +61,14 @@ class HomeController : BaseController() {
         fab.setOnClickListener { onFabClicked(true) }
     }
 
-    override fun onDestroyView(view: View) {
-        super.onDestroyView(view)
-        log("on destroy view")
-    }
-
-    public override fun onDestroy() {
-        super.onDestroy()
-        log("on destroy")
-    }
-
-    override fun onDetach(view: View) {
-        super.onDetach(view)
-        log("on detach")
-    }
-
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        log("on save instance state")
-    }
-
     override fun onSaveViewState(view: View, outState: Bundle) {
         super.onSaveViewState(view, outState)
         outState.putInt(KEY_FAB_VISIBILITY, fab!!.visibility)
-        log("on save view state")
     }
 
     override fun onRestoreViewState(view: View, savedViewState: Bundle) {
         super.onRestoreViewState(view, savedViewState)
-
-
         fab!!.visibility = savedViewState.getInt(KEY_FAB_VISIBILITY)
-        log("on restore view state")
-    }
-
-    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
-        super.onRestoreInstanceState(savedInstanceState)
-        log("on restore instance state")
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -299,10 +241,6 @@ class HomeController : BaseController() {
             }
 
         }
-    }
-
-    private fun log(message: String) {
-        Log.d("lifecycle", message)
     }
 
     companion object {

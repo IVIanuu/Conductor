@@ -28,10 +28,8 @@ import android.util.ArrayMap
 import android.util.FloatProperty
 import android.util.IntProperty
 import android.util.Property
-import android.view.animation.Interpolator
 import android.view.animation.LinearInterpolator
-
-import java.util.ArrayList
+import java.util.*
 
 /**
  * Utility methods for working with animations.

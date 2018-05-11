@@ -4,7 +4,7 @@ import android.os.Parcel
 import android.os.Parcelable
 import android.util.SparseArray
 
-class StringSparseArrayParceler : Parcelable {
+internal class StringSparseArrayParceler : Parcelable {
 
     val stringSparseArray: SparseArray<String>
 
@@ -40,7 +40,6 @@ class StringSparseArrayParceler : Parcelable {
     }
 
     companion object {
-        @JvmStatic
         val CREATOR: Parcelable.Creator<StringSparseArrayParceler> =
             object : Parcelable.Creator<StringSparseArrayParceler> {
                 override fun createFromParcel(`in`: Parcel): StringSparseArrayParceler {

@@ -3,9 +3,8 @@ package com.ivianuu.conductor.sample.util
 import android.os.Bundle
 import android.os.Parcelable
 import android.util.SparseArray
-
 import java.io.Serializable
-import java.util.ArrayList
+import java.util.*
 
 class BundleBuilder(private val bundle: Bundle) {
 

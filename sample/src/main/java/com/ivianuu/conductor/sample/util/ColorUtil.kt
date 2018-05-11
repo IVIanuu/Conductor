@@ -1,9 +1,7 @@
 package com.ivianuu.conductor.sample.util
 
 import android.content.res.Resources
-import android.content.res.TypedArray
 import android.graphics.Color
-
 import com.ivianuu.conductor.sample.R
 
 object ColorUtil {

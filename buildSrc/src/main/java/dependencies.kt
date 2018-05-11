@@ -22,7 +22,7 @@ object Versions {
     const val rxKotlin = "2.2.0"
     const val rxPermissions = "981f695508"
     const val rxPreferences = "2.0.0"
-    const val support = "26.0.2"
+    const val support = "27.1.1"
 }
 //
 object Deps {

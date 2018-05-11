@@ -3,20 +3,12 @@ package com.ivianuu.conductor.sample.changehandler
 import android.annotation.TargetApi
 import android.os.Build
 import android.os.Bundle
-import android.transition.ChangeBounds
-import android.transition.ChangeClipBounds
-import android.transition.ChangeTransform
-import android.transition.Explode
-import android.transition.Slide
-import android.transition.Transition
-import android.transition.TransitionSet
+import android.transition.*
 import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
-
 import com.ivianuu.conductor.changehandler.SharedElementTransitionChangeHandler
-
-import java.util.ArrayList
+import java.util.*
 
 @TargetApi(Build.VERSION_CODES.LOLLIPOP)
 class CityGridSharedElementTransitionChangeHandler : SharedElementTransitionChangeHandler {

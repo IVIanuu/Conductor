@@ -11,7 +11,6 @@ import android.view.ViewGroup
 @TargetApi(Build.VERSION_CODES.LOLLIPOP)
 object TransitionUtils {
 
-    @JvmStatic
     fun findNamedViews(namedViews: MutableMap<String, View>, view: View) {
         if (view.visibility == View.VISIBLE) {
             val transitionName = view.transitionName
@@ -29,7 +28,6 @@ object TransitionUtils {
         }
     }
 
-    @JvmStatic
     fun findNamedView(view: View, transitionName: String): View? {
         if (transitionName == view.transitionName) {
             return view
@@ -48,7 +46,6 @@ object TransitionUtils {
         return null
     }
 
-    @JvmStatic
     fun setEpicenter(transition: Transition, view: View?) {
         if (view != null) {
             val epicenter = Rect()
@@ -61,14 +58,12 @@ object TransitionUtils {
         }
     }
 
-    @JvmStatic
     fun getBoundsOnScreen(view: View, epicenter: Rect) {
         val loc = IntArray(2)
         view.getLocationOnScreen(loc)
         epicenter.set(loc[0], loc[1], loc[0] + view.width, loc[1] + view.height)
     }
 
-    @JvmStatic
     fun setTargets(transition: Transition, nonExistentView: View, sharedViews: MutableList<View>) {
         val views = transition.targets
         views.clear()
@@ -82,7 +77,6 @@ object TransitionUtils {
         addTargets(transition, sharedViews)
     }
 
-    @JvmStatic
     fun addTargets(transition: Transition?, views: List<View>) {
         if (transition == null) {
             return
@@ -105,7 +99,6 @@ object TransitionUtils {
         }
     }
 
-    @JvmStatic
     fun replaceTargets(transition: Transition, oldTargets: List<View>, newTargets: List<View>?) {
         if (transition is TransitionSet) {
             val numTransitions = transition.transitionCount
@@ -156,7 +149,6 @@ object TransitionUtils {
         return false
     }
 
-    @JvmStatic
     fun hasSimpleTarget(transition: Transition): Boolean {
         return (!isNullOrEmpty(transition.targetIds)
                 || !isNullOrEmpty(transition.targetNames)
@@ -167,7 +159,6 @@ object TransitionUtils {
         return list == null || list.isEmpty()
     }
 
-    @JvmStatic
     fun mergeTransitions(ordering: Int, vararg transitions: Transition?): TransitionSet {
         val transitionSet = TransitionSet()
         for (transition in transitions) {

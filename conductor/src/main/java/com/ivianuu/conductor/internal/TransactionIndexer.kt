@@ -2,7 +2,7 @@ package com.ivianuu.conductor.internal
 
 import android.os.Bundle
 
-class TransactionIndexer {
+internal class TransactionIndexer {
 
     private var currentIndex = 0
 

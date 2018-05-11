@@ -1,10 +1,7 @@
 package com.ivianuu.conductor.sample.controllers
 
-import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-
-import com.ivianuu.conductor.Router
 import com.ivianuu.conductor.RouterTransaction
 import com.ivianuu.conductor.sample.R
 import com.ivianuu.conductor.sample.controllers.NavigationDemoController.DisplayUpMode

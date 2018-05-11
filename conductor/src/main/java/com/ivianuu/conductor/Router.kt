@@ -4,15 +4,14 @@ import android.app.Activity
 import android.content.Intent
 import android.content.IntentSender
 import android.os.Bundle
-import android.support.annotation.UiThread
 import android.view.*
 import com.ivianuu.conductor.Controller.LifecycleListener
 import com.ivianuu.conductor.ControllerChangeHandler.ChangeTransaction
 import com.ivianuu.conductor.ControllerChangeHandler.ControllerChangeListener
 import com.ivianuu.conductor.changehandler.SimpleSwapChangeHandler
 import com.ivianuu.conductor.internal.NoOpControllerChangeHandler
-import com.ivianuu.conductor.internal.ThreadUtils
 import com.ivianuu.conductor.internal.TransactionIndexer
+import com.ivianuu.conductor.internal.ensureMainThread
 import java.util.*
 
 /**
@@ -96,12 +95,9 @@ abstract class Router {
     /**
      * This should be called by the host Activity when its onBackPressed method is called. The call will be forwarded
      * to its top [Controller]. If that controller doesn't handle it, then it will be popped.
-     *
-     * @return Whether or not a back action was handled by the Router
      */
-    @UiThread
     fun handleBack(): Boolean {
-        ThreadUtils.ensureMainThread()
+        ensureMainThread()
 
         if (!backstack.isEmpty) {
             if (backstack.peek()!!.controller.handleBack()) {
@@ -116,12 +112,9 @@ abstract class Router {
 
     /**
      * Pops the top [Controller] from the backstack
-     *
-     * @return Whether or not this Router still has controllers remaining on it after popping.
      */
-    @UiThread
     fun popCurrentController(): Boolean {
-        ThreadUtils.ensureMainThread()
+        ensureMainThread()
 
         val transaction = backstack.peek()
                 ?: throw IllegalStateException("Trying to pop the current controller when there are none on the backstack.")
@@ -130,13 +123,9 @@ abstract class Router {
 
     /**
      * Pops the passed [Controller] from the backstack
-     *
-     * @param controller The controller that should be popped from this Router
-     * @return Whether or not this Router still has controllers remaining on it after popping.
      */
-    @UiThread
     fun popController(controller: Controller): Boolean {
-        ThreadUtils.ensureMainThread()
+        ensureMainThread()
 
         val topTransaction = backstack.peek()
         val poppingTopController =
@@ -181,9 +170,8 @@ abstract class Router {
      * @param transaction The transaction detailing what should be pushed, including the [Controller],
      * and its push and pop [ControllerChangeHandler], and its tag.
      */
-    @UiThread
     fun pushController(transaction: RouterTransaction) {
-        ThreadUtils.ensureMainThread()
+        ensureMainThread()
 
         val from = backstack.peek()
         pushToBackstack(transaction)
@@ -196,9 +184,8 @@ abstract class Router {
      * @param transaction The transaction detailing what should be pushed, including the [Controller],
      * and its push and pop [ControllerChangeHandler], and its tag.
      */
-    @UiThread
     fun replaceTopController(transaction: RouterTransaction) {
-        ThreadUtils.ensureMainThread()
+        ensureMainThread()
 
         val topTransaction = backstack.peek()
         if (!backstack.isEmpty) {
@@ -266,25 +253,18 @@ abstract class Router {
 
     /**
      * Pops all [Controller]s until only the root is left
-     *
-     * @return Whether or not any [Controller]s were popped in order to get to the root transaction
      */
-    @UiThread
     fun popToRoot(): Boolean {
-        ThreadUtils.ensureMainThread()
+        ensureMainThread()
 
         return popToRoot(null)
     }
 
     /**
      * Pops all [Controller] until only the root is left
-     *
-     * @param changeHandler The [ControllerChangeHandler] to handle this transaction
-     * @return Whether or not any [Controller]s were popped in order to get to the root transaction
      */
-    @UiThread
     fun popToRoot(changeHandler: ControllerChangeHandler?): Boolean {
-        ThreadUtils.ensureMainThread()
+        ensureMainThread()
 
         return if (backstack.size > 1) {
             popToTransaction(backstack.root()!!, changeHandler)
@@ -296,27 +276,18 @@ abstract class Router {
 
     /**
      * Pops all [Controller]s until the Controller with the passed tag is at the top
-     *
-     * @param tag The tag being popped to
-     * @return Whether or not any [Controller]s were popped in order to get to the transaction with the passed tag
      */
-    @UiThread
     fun popToTag(tag: String): Boolean {
-        ThreadUtils.ensureMainThread()
+        ensureMainThread()
 
         return popToTag(tag, null)
     }
 
     /**
      * Pops all [Controller]s until the [Controller] with the passed tag is at the top
-     *
-     * @param tag           The tag being popped to
-     * @param changeHandler The [ControllerChangeHandler] to handle this transaction
-     * @return Whether or not the [Controller] with the passed tag is now at the top
      */
-    @UiThread
     fun popToTag(tag: String, changeHandler: ControllerChangeHandler?): Boolean {
-        ThreadUtils.ensureMainThread()
+        ensureMainThread()
 
         for (transaction in backstack) {
             if (tag == transaction.tag()) {
@@ -333,9 +304,8 @@ abstract class Router {
      * @param transaction The transaction detailing what should be pushed, including the [Controller],
      * and its push and pop [ControllerChangeHandler], and its tag.
      */
-    @UiThread
     fun setRoot(transaction: RouterTransaction) {
-        ThreadUtils.ensureMainThread()
+        ensureMainThread()
 
         val transactions = listOf(transaction)
         setBackstack(transactions, transaction.pushChangeHandler())
@@ -391,12 +361,11 @@ abstract class Router {
      * @param newBackstack  The new backstack
      * @param changeHandler An optional change handler to be used to handle the root view of transition
      */
-    @UiThread
     open fun setBackstack(
         newBackstack: List<RouterTransaction>,
         changeHandler: ControllerChangeHandler?
     ) {
-        ThreadUtils.ensureMainThread()
+        ensureMainThread()
 
         val oldTransactions = getBackstack()
         val oldVisibleTransactions = getVisibleTransactions(backstack.iterator())
@@ -523,9 +492,8 @@ abstract class Router {
     /**
      * Attaches this Router's existing backstack to its container if one exists.
      */
-    @UiThread
     fun rebindIfNeeded() {
-        ThreadUtils.ensureMainThread()
+        ensureMainThread()
 
         val backstackIterator = backstack.reverseIterator()
         while (backstackIterator.hasNext()) {
@@ -602,6 +570,8 @@ abstract class Router {
                 childRouter.onActivityDestroyed(activity)
             }
         }
+
+
 
         container = null
     }
@@ -691,7 +661,6 @@ abstract class Router {
             }
 
             if (changeHandler == null) {
-
                 changeHandler = topTransaction!!.popChangeHandler()
             }
 

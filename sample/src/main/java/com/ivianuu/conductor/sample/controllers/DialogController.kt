@@ -3,11 +3,7 @@ package com.ivianuu.conductor.sample.controllers
 
 import android.os.Bundle
 import android.text.method.LinkMovementMethod
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
-import android.widget.TextView
-
 import com.ivianuu.conductor.sample.R
 import com.ivianuu.conductor.sample.controllers.base.BaseController
 import com.ivianuu.conductor.sample.util.BundleBuilder

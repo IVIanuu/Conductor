@@ -7,8 +7,6 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
-
 import com.ivianuu.conductor.RouterTransaction
 import com.ivianuu.conductor.changehandler.HorizontalChangeHandler
 import com.ivianuu.conductor.sample.R

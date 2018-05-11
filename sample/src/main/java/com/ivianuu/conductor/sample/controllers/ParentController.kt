@@ -1,14 +1,10 @@
 package com.ivianuu.conductor.sample.controllers
 
-import android.support.annotation.IdRes
-import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-
 import com.ivianuu.conductor.Controller
 import com.ivianuu.conductor.ControllerChangeHandler
 import com.ivianuu.conductor.ControllerChangeType
-import com.ivianuu.conductor.Router
 import com.ivianuu.conductor.RouterTransaction
 import com.ivianuu.conductor.changehandler.FadeChangeHandler
 import com.ivianuu.conductor.sample.R
@@ -40,7 +36,7 @@ class ParentController : BaseController() {
     }
 
     private fun addChild(index: Int) {
-        @IdRes val frameId =
+        val frameId =
             resources!!.getIdentifier("child_content_" + (index + 1), "id", activity!!.packageName)
         val container = view!!.findViewById<View>(frameId) as ViewGroup
         val childRouter = getChildRouter(container).setPopsLastView(true)

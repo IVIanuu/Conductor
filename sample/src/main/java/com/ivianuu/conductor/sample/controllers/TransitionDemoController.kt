@@ -2,15 +2,8 @@ package com.ivianuu.conductor.sample.controllers
 
 import android.content.res.ColorStateList
 import android.os.Bundle
-import android.support.annotation.ColorRes
-import android.support.annotation.LayoutRes
-import android.support.design.widget.FloatingActionButton
 import android.support.v4.content.ContextCompat
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
-import android.widget.TextView
-
 import com.ivianuu.conductor.Controller
 import com.ivianuu.conductor.ControllerChangeHandler
 import com.ivianuu.conductor.RouterTransaction
@@ -32,7 +25,7 @@ class TransitionDemoController(args: Bundle) : BaseController(args) {
     override val title: String?
         get() = "Transition Demos"
 
-    enum class TransitionDemo private constructor(internal var title: String, @param:LayoutRes internal var layoutId: Int, @param:ColorRes internal var colorId: Int) {
+    enum class TransitionDemo(val title: String, val layoutId: Int, val colorId: Int) {
         VERTICAL(
             "Vertical Slide Animation",
             R.layout.controller_transition_demo,

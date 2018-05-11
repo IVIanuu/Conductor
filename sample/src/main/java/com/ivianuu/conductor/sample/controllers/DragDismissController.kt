@@ -2,10 +2,7 @@ package com.ivianuu.conductor.sample.controllers
 
 import android.annotation.TargetApi
 import android.os.Build.VERSION_CODES
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
-
 import com.ivianuu.conductor.sample.R
 import com.ivianuu.conductor.sample.changehandler.ScaleFadeChangeHandler
 import com.ivianuu.conductor.sample.controllers.base.BaseController

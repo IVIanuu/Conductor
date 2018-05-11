@@ -9,7 +9,6 @@ import android.content.res.Resources
 import android.os.Build
 import android.os.Bundle
 import android.os.Parcelable
-import android.support.annotation.IdRes
 import android.text.TextUtils
 import android.util.SparseArray
 import android.view.*
@@ -27,13 +26,7 @@ import kotlin.collections.ArrayList
  * a much lighter weight component than either Activities or Fragments. While it offers several lifecycle
  * methods, they are much simpler and more predictable than those of Activities and Fragments.
  */
-abstract class Controller
-/**
- * Constructor that takes arguments that need to be retained across restarts.
- *
- * @param args Any arguments that need to be retained.
- */
-@JvmOverloads protected constructor(args: Bundle? = null) {
+abstract class Controller @JvmOverloads protected constructor(args: Bundle? = null) {
 
     /**
      * Returns any arguments that were set in this Controller's constructor
@@ -187,15 +180,11 @@ abstract class Controller
     /**
      * Returns the target Controller that was set with the [.setTargetController]
      * method or `null` if this Controller has no target.
-     *
-     * @return This Controller's target
      */
     /**
      * Optional target for this Controller. One reason this could be used is to send results back to the Controller
      * that started this one. Target Controllers are retained across instances. It is recommended
      * that Controllers enforce that their target Controller conform to a specific Interface.
-     *
-     * @param target The Controller that is the target of this one.
      */
     var targetController: Controller?
         get() = if (targetInstanceId != null) {
@@ -254,7 +243,7 @@ abstract class Controller
      * @param createIfNeeded If true, a router will be created if one does not yet exist. Else `null` will be returned in this case.
      */
     fun getChildRouter(container: ViewGroup, tag: String?, createIfNeeded: Boolean): Router? {
-        @IdRes val containerId = container.id
+        val containerId = container.id
 
         var childRouter: ControllerHostedRouter? = null
         for (router in childRouters) {
@@ -530,8 +519,6 @@ abstract class Controller
 
     /**
      * Should be overridden if this Controller needs to handle the back button being pressed.
-     *
-     * @return True if this Controller has consumed the back button press, otherwise false
      */
     open fun handleBack(): Boolean {
         val childTransactions = mutableListOf<RouterTransaction>()
@@ -571,6 +558,11 @@ abstract class Controller
      */
     fun removeLifecycleListener(lifecycleListener: LifecycleListener) {
         lifecycleListeners.remove(lifecycleListener)
+    }
+
+    private fun notifyLifecycleListeners(action: (LifecycleListener) -> Unit) {
+        val lifecycleListeners = lifecycleListeners.toList()
+        lifecycleListeners.forEach(action)
     }
 
     /**
@@ -641,9 +633,6 @@ abstract class Controller
 
     /**
      * Called when an option menu item has been selected by the user.
-     *
-     * @param item The selected item.
-     * @return True if this event has been consumed, false if it has not.
      */
     open fun onOptionsItemSelected(item: MenuItem): Boolean {
         return false
@@ -1049,11 +1038,6 @@ abstract class Controller
 
     internal fun optionsItemSelected(item: MenuItem): Boolean {
         return isAttached && hasOptionsMenu && !optionsMenuHidden && onOptionsItemSelected(item)
-    }
-
-    private fun notifyLifecycleListeners(action: (LifecycleListener) -> Unit) {
-        val lifecycleListeners = lifecycleListeners.toList()
-        lifecycleListeners.forEach(action)
     }
 
     private fun ensureRequiredConstructor() {

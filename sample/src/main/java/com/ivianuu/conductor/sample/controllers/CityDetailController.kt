@@ -1,21 +1,15 @@
 package com.ivianuu.conductor.sample.controllers
 
 import android.os.Bundle
-import android.support.annotation.DrawableRes
 import android.support.v4.view.ViewCompat
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
-import android.support.v7.widget.RecyclerView.ViewHolder
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.TextView
-
 import com.ivianuu.conductor.sample.R
 import com.ivianuu.conductor.sample.controllers.base.BaseController
 import com.ivianuu.conductor.sample.util.BundleBuilder
-
 import com.ivianuu.conductor.sample.util.KtViewHolder
 import kotlinx.android.synthetic.main.controller_city_detail.*
 import kotlinx.android.synthetic.main.row_city_header.*
@@ -28,7 +22,7 @@ class CityDetailController(args: Bundle) : BaseController(args) {
     private val imageDrawableRes = args.getInt(KEY_IMAGE)
     override val title = args.getString(KEY_TITLE)
 
-    constructor(@DrawableRes imageDrawableRes: Int, title: String) : this(
+    constructor(imageDrawableRes: Int, title: String) : this(
         BundleBuilder(Bundle())
             .putInt(KEY_IMAGE, imageDrawableRes)
             .putString(KEY_TITLE, title)

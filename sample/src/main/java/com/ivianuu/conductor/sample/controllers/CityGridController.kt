@@ -2,7 +2,6 @@ package com.ivianuu.conductor.sample.controllers
 
 import android.graphics.PorterDuff.Mode
 import android.os.Bundle
-import android.support.annotation.DrawableRes
 import android.support.v4.content.ContextCompat
 import android.support.v4.view.ViewCompat
 import android.support.v7.widget.GridLayoutManager
@@ -10,9 +9,6 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.TextView
-
 import com.ivianuu.conductor.RouterTransaction
 import com.ivianuu.conductor.changehandler.FadeChangeHandler
 import com.ivianuu.conductor.changehandler.TransitionChangeHandlerCompat
@@ -23,9 +19,7 @@ import com.ivianuu.conductor.sample.util.BundleBuilder
 import com.ivianuu.conductor.sample.util.KtViewHolder
 import kotlinx.android.synthetic.main.controller_city_grid.*
 import kotlinx.android.synthetic.main.row_city_grid.view.*
-import kotlinx.android.synthetic.main.row_city_header.*
-
-import java.util.ArrayList
+import java.util.*
 
 class CityGridController(args: Bundle) : BaseController(args) {
 

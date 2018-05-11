@@ -5,7 +5,7 @@ import android.view.ViewGroup
 
 import com.ivianuu.conductor.ControllerChangeHandler
 
-class NoOpControllerChangeHandler : ControllerChangeHandler() {
+internal class NoOpControllerChangeHandler : ControllerChangeHandler() {
 
     override val isReusable: Boolean
         get() = true

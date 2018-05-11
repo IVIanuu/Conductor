@@ -8,6 +8,7 @@ import android.view.ViewGroup
 
 import com.ivianuu.conductor.Controller
 import com.ivianuu.conductor.sample.MainActivity
+import com.ivianuu.conductor.sample.d
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.*
 
@@ -32,11 +33,17 @@ abstract class BaseController : Controller, LayoutContainer {
 
     protected constructor(args: Bundle) : super(args) {}
 
+    override fun onCreate() {
+        super.onCreate()
+        d { "on create" }
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup,
         savedViewState: Bundle?
     ): View {
+        d { "on create view" }
         val view = inflater.inflate(layoutRes, container, false)
         containerView = view
         onViewCreated(view)
@@ -46,6 +53,17 @@ abstract class BaseController : Controller, LayoutContainer {
     override fun onAttach(view: View) {
         setTitle()
         super.onAttach(view)
+        d { "on attach" }
+    }
+
+    override fun onDetach(view: View) {
+        d { "on detach" }
+        super.onDetach(view)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        d { "on destroy" }
     }
 
     protected fun setTitle() {
@@ -63,11 +81,31 @@ abstract class BaseController : Controller, LayoutContainer {
             actionBar.title = title
         }
     }
-
     override fun onDestroyView(view: View) {
+        d { "on destroy view" }
         clearFindViewByIdCache()
         containerView = null
         super.onDestroyView(view)
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        d { "on save instance state" }
+    }
+
+    override fun onRestoreViewState(view: View, savedViewState: Bundle) {
+        super.onRestoreViewState(view, savedViewState)
+        d { "on restore view state" }
+    }
+
+    override fun onSaveViewState(view: View, outState: Bundle) {
+        super.onSaveViewState(view, outState)
+        d { "on save view state" }
+    }
+
+    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
+        super.onRestoreInstanceState(savedInstanceState)
+        d { "on restore instance state" }
     }
 
     protected abstract fun onViewCreated(view: View)
