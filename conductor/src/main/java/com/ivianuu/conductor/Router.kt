@@ -571,8 +571,6 @@ abstract class Router {
             }
         }
 
-
-
         container = null
     }
 

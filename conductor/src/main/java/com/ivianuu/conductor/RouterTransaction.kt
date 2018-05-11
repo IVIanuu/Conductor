@@ -93,10 +93,7 @@ class RouterTransaction {
         }
     }
 
-    /**
-     * Used to serialize this transaction into a Bundle
-     */
-    fun saveInstanceState(): Bundle {
+    internal fun saveInstanceState(): Bundle {
         val bundle = Bundle()
 
         bundle.putBundle(KEY_VIEW_CONTROLLER_BUNDLE, controller.saveInstanceState())
