@@ -17,14 +17,11 @@ open class TransitionChangeHandlerCompat : ControllerChangeHandler {
 
     lateinit var changeHandler: ControllerChangeHandler
 
-    constructor() {}
+    constructor()
 
     /**
      * Constructor that takes a [TransitionChangeHandler] for use with compatible devices, as well as a fallback
      * [ControllerChangeHandler] for use with older devices.
-     *
-     * @param transitionChangeHandler The change handler that will be used on API 21 and above
-     * @param fallbackChangeHandler The change handler that will be used on APIs below 21
      */
     constructor(
         transitionChangeHandler: TransitionChangeHandler,

@@ -71,6 +71,7 @@ internal class ControllerHostedRouter : Router {
     }
 
     fun removeHost() {
+        val container = container
         if (container != null && container is ControllerChangeListener) {
             removeChangeListener(container as ControllerChangeListener)
         }
@@ -91,7 +92,7 @@ internal class ControllerHostedRouter : Router {
 
         prepareForContainerRemoval()
         hostController = null
-        container = null
+        this.container = null
     }
 
     fun setDetachFrozen(frozen: Boolean) {

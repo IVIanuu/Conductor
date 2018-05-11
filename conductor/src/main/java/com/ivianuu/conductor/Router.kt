@@ -92,7 +92,7 @@ abstract class Router {
         ensureMainThread()
 
         if (!backstack.isEmpty) {
-            if (backstack.peek()!!.controller.handleBack()) {
+            if (backstack.peek()?.controller?.handleBack() == true) {
                 return true
             } else if (popCurrentController()) {
                 return true
@@ -180,8 +180,9 @@ abstract class Router {
 
         val handler = transaction.pushChangeHandler()
         if (topTransaction != null) {
+            val pushChangeHandler = topTransaction.pushChangeHandler()
             val oldHandlerRemovedViews =
-                topTransaction.pushChangeHandler() == null || topTransaction.pushChangeHandler()!!.removesFromViewOnPush()
+                pushChangeHandler == null || pushChangeHandler.removesFromViewOnPush()
             val newHandlerRemovesViews = handler == null || handler.removesFromViewOnPush()
             if (!oldHandlerRemovedViews && newHandlerRemovesViews) {
                 for (visibleTransaction in getVisibleTransactions(backstack.iterator())) {
@@ -253,8 +254,13 @@ abstract class Router {
         ensureMainThread()
 
         return if (backstack.size > 1) {
-            popToTransaction(backstack.root()!!, changeHandler)
-            true
+            val rootTransaction = backstack.root()
+            if (rootTransaction != null) {
+                popToTransaction(rootTransaction, changeHandler)
+                true
+            } else {
+                false
+            }
         } else {
             false
         }
@@ -631,7 +637,7 @@ abstract class Router {
             }
 
             if (changeHandler == null) {
-                changeHandler = topTransaction!!.popChangeHandler()
+                changeHandler = topTransaction?.popChangeHandler()
             }
 
             setBackstack(updatedBackstack, changeHandler)
@@ -647,13 +653,13 @@ abstract class Router {
         container?.setOnHierarchyChangeListener(null)
     }
 
-    fun handleRequestedPermission(permission: String): Boolean? {
+    fun handleRequestedPermission(permission: String): Boolean {
         for (transaction in backstack) {
             if (transaction.controller.didRequestPermission(permission)) {
                 return transaction.controller.shouldShowRequestPermissionRationale(permission)
             }
         }
-        return null
+        return false
     }
 
     private fun performControllerChange(
@@ -666,7 +672,7 @@ abstract class Router {
         }
 
         val changeHandler = when {
-            isPush -> to!!.pushChangeHandler()
+            isPush && to != null -> to.pushChangeHandler()
             from != null -> from.popChangeHandler()
             else -> null
         }
@@ -685,9 +691,9 @@ abstract class Router {
         val fromController = from?.controller
         var forceDetachDestroy = false
 
-        if (to != null) {
-            to.ensureValidIndex(transactionIndexer!!)
-            setControllerRouter(toController!!)
+        if (to != null && toController != null) {
+            to.ensureValidIndex(transactionIndexer)
+            setControllerRouter(toController)
         } else if (backstack.size == 0 && !popsLastView) {
             // We're emptying out the backstack. Views get weird if you transition them out, so just no-op it. The host
             // Activity or controller should be handling this by finishing or at least hiding this view.
@@ -697,8 +703,9 @@ abstract class Router {
 
         performControllerChange(toController, fromController, isPush, changeHandler)
 
-        if (forceDetachDestroy && fromController != null && fromController.view != null) {
-            fromController.detach(fromController.view!!, true, false)
+        val fromView = fromController?.view
+        if (forceDetachDestroy && fromView != null) {
+            fromController.detach(fromView, true, false)
         }
     }
 
@@ -771,9 +778,7 @@ abstract class Router {
         val views = mutableListOf<View>()
 
         for (transaction in getVisibleTransactions(backstack.iterator())) {
-            if (transaction.controller.view != null) {
-                views.add(transaction.controller.view!!)
-            }
+            transaction.controller.view?.let { views.add(it) }
         }
 
         for (router in siblingRouters) {
@@ -782,11 +787,15 @@ abstract class Router {
             }
         }
 
-        val childCount = container?.childCount ?: 0
-        for (i in childCount - 1 downTo 0) {
-            val child = container!!.getChildAt(i)
-            if (!views.contains(child)) {
-                container!!.removeView(child)
+
+        val container = container
+        if (container != null) {
+            val childCount = container.childCount
+            for (i in childCount - 1 downTo 0) {
+                val child = container.getChildAt(i)
+                if (!views.contains(child)) {
+                    container.removeView(child)
+                }
             }
         }
     }
@@ -796,7 +805,7 @@ abstract class Router {
     private fun ensureOrderedTransactionIndices(backstack: List<RouterTransaction>) {
         val indices = mutableListOf<Int>()
         for (transaction in backstack) {
-            transaction.ensureValidIndex(transactionIndexer!!)
+            transaction.ensureValidIndex(transactionIndexer)
             indices.add(transaction.transactionIndex)
         }
 
@@ -809,13 +818,8 @@ abstract class Router {
 
     private fun addRouterViewsToList(router: Router, list: MutableList<View>) {
         for (controller in router.controllers) {
-            if (controller.view != null) {
-                list.add(controller.view!!)
-            }
-
-            for (child in controller.getChildRouters()) {
-                addRouterViewsToList(child, list)
-            }
+            controller.view?.let { list.add(it) }
+            controller.childRouters.forEach { addRouterViewsToList(it, list) }
         }
     }
 
@@ -825,7 +829,8 @@ abstract class Router {
             val transaction = backstackIterator.next()
             transactions.add(transaction)
 
-            if (transaction.pushChangeHandler() == null || transaction.pushChangeHandler()!!.removesFromViewOnPush()) {
+            val pushChangeHandler = transaction.pushChangeHandler()
+            if (pushChangeHandler == null || pushChangeHandler.removesFromViewOnPush()) {
                 break
             }
         }

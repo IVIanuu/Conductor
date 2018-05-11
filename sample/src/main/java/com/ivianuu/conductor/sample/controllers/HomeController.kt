@@ -120,8 +120,8 @@ class HomeController : BaseController() {
 
         val pushHandler = if (fromFab) TransitionChangeHandlerCompat(
             FabToDialogTransitionChangeHandler(),
-            FadeChangeHandler(false)
-        ) else FadeChangeHandler(false)
+            FadeChangeHandler(removesFromViewOnPush = false)
+        ) else FadeChangeHandler(removesFromViewOnPush = false)
         val popHandler = if (fromFab) TransitionChangeHandlerCompat(
             FabToDialogTransitionChangeHandler(),
             FadeChangeHandler()
@@ -184,7 +184,7 @@ class HomeController : BaseController() {
             }
             HomeController.DemoModel.DRAG_DISMISS -> requireRouter().pushController(
                 RouterTransaction.with(DragDismissController())
-                    .pushChangeHandler(FadeChangeHandler(false))
+                    .pushChangeHandler(FadeChangeHandler(removesFromViewOnPush = false))
                     .popChangeHandler(FadeChangeHandler())
             )
             HomeController.DemoModel.MULTIPLE_CHILD_ROUTERS -> requireRouter().pushController(
@@ -244,7 +244,6 @@ class HomeController : BaseController() {
     }
 
     companion object {
-
         private const val KEY_FAB_VISIBILITY = "HomeController.fabVisibility"
     }
 }

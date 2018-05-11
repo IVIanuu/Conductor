@@ -25,14 +25,14 @@ import com.ivianuu.conductor.internal.TransitionUtils
 abstract class SharedElementTransitionChangeHandler : TransitionChangeHandler() {
 
     // A map of from -> to names. Generally these will be the same.
-    internal val sharedElementNames = ArrayMap<String, String>()
+    private val sharedElementNames = ArrayMap<String, String>()
 
-    internal val waitForTransitionNames = mutableListOf<String>()
-    internal val removedViews = mutableListOf<ViewParentPair>()
+    private val waitForTransitionNames = mutableListOf<String>()
+    private val removedViews = mutableListOf<ViewParentPair>()
 
-    internal var exitTransition: Transition? = null
-    internal var enterTransition: Transition? = null
-    internal var sharedElementTransition: Transition? = null
+    private var exitTransition: Transition? = null
+    private var enterTransition: Transition? = null
+    private var sharedElementTransition: Transition? = null
     private var exitTransitionCallback: SharedElementCallback? = null
     private var enterTransitionCallback: SharedElementCallback? = null
 
@@ -348,11 +348,11 @@ abstract class SharedElementTransitionChangeHandler : TransitionChangeHandler() 
             }
 
             callSharedElementStartEnd(capturedToSharedElements, false)
-            if (sharedElementTransition != null) {
-                sharedElementTransition!!.targets.clear()
-                sharedElementTransition!!.targets.addAll(toSharedElements)
+            sharedElementTransition?.let { sharedElementTransition ->
+                sharedElementTransition.targets.clear()
+                sharedElementTransition.targets.addAll(toSharedElements)
                 TransitionUtils.replaceTargets(
-                    sharedElementTransition!!,
+                    sharedElementTransition,
                     fromSharedElements,
                     toSharedElements
                 )
@@ -375,12 +375,9 @@ abstract class SharedElementTransitionChangeHandler : TransitionChangeHandler() 
         if (sharedElementNames.size > 0 && fromSharedElements != null) {
             val fromEpicenterView = fromSharedElements[sharedElementNames.keyAt(0)]
 
-            if (sharedElementTransition != null) {
-                TransitionUtils.setEpicenter(sharedElementTransition!!, fromEpicenterView)
-            }
-
-            if (exitTransition != null) {
-                TransitionUtils.setEpicenter(exitTransition!!, fromEpicenterView)
+            if (fromEpicenterView != null) {
+                sharedElementTransition?.let { TransitionUtils.setEpicenter(it, fromEpicenterView) }
+                exitTransition?.let { TransitionUtils.setEpicenter(it, fromEpicenterView) }
             }
         }
     }
@@ -515,13 +512,13 @@ abstract class SharedElementTransitionChangeHandler : TransitionChangeHandler() 
         overallTransition.addListener(object : TransitionListener {
             override fun onTransitionStart(transition: Transition) {
                 if (enterTransition != null && enteringViews != null) {
-                    TransitionUtils.replaceTargets(enterTransition, enteringViews, null)
+                    TransitionUtils.replaceTargets(enterTransition, enteringViews, emptyList())
                 }
                 if (exitTransition != null && exitingViews != null) {
-                    TransitionUtils.replaceTargets(exitTransition, exitingViews, null)
+                    TransitionUtils.replaceTargets(exitTransition, exitingViews, emptyList())
                 }
                 if (sharedElementTransition != null && toSharedElements != null) {
-                    TransitionUtils.replaceTargets(sharedElementTransition, toSharedElements, null)
+                    TransitionUtils.replaceTargets(sharedElementTransition, toSharedElements, emptyList())
                 }
             }
 
@@ -638,8 +635,6 @@ abstract class SharedElementTransitionChangeHandler : TransitionChangeHandler() 
 
     /**
      * Used to register an element that will take part in the shared element transition.
-     *
-     * @param name The transition name that is used for both the entering and exiting views.
      */
     protected open fun addSharedElement(name: String) {
         sharedElementNames[name] = name
@@ -648,9 +643,6 @@ abstract class SharedElementTransitionChangeHandler : TransitionChangeHandler() 
     /**
      * Used to register an element that will take part in the shared element transition. Maps the name used in the
      * "from" view to the name used in the "to" view if they are not the same.
-     *
-     * @param fromName The transition name used in the "from" view
-     * @param toName The transition name used in the "to" view
      */
     protected open fun addSharedElement(fromName: String, toName: String) {
         sharedElementNames[fromName] = toName
@@ -659,9 +651,6 @@ abstract class SharedElementTransitionChangeHandler : TransitionChangeHandler() 
     /**
      * Used to register an element that will take part in the shared element transition. Maps the name used in the
      * "from" view to the name used in the "to" view if they are not the same.
-     *
-     * @param sharedElement The view from the "from" view that will take part in the shared element transition
-     * @param toName The transition name used in the "to" view
      */
     protected open fun addSharedElement(sharedElement: View, toName: String) {
         val transitionName = sharedElement.transitionName

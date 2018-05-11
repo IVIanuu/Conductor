@@ -14,31 +14,26 @@ import com.ivianuu.conductor.ControllerChangeHandler
 /**
  * A base [ControllerChangeHandler] that facilitates using [android.animation.Animator]s to replace Controller Views
  */
-abstract class AnimatorChangeHandler(
-    duration: Long,
-    internal var removesFromViewOnPush: Boolean
+abstract class AnimatorChangeHandler @JvmOverloads constructor(
+    animationDuration: Long = DEFAULT_ANIMATION_DURATION,
+    removesFromViewOnPush: Boolean = true
 ) : ControllerChangeHandler() {
 
-    var animationDuration = 0L
+    var animationDuration: Long
         private set
-    internal var canceled = false
-    internal var needsImmediateCompletion = false
+
+    var removesFromViewOnPush: Boolean
+        private set
+
+    private var canceled = false
+    private var needsImmediateCompletion = false
     private var completed = false
-    internal var animator: Animator? = null
+    private var animator: Animator? = null
     private var onAnimationReadyOrAbortedListener: OnAnimationReadyOrAbortedListener? = null
 
-    constructor() : this(DEFAULT_ANIMATION_DURATION, true) {}
-
-    constructor(removesFromViewOnPush: Boolean) : this(
-        DEFAULT_ANIMATION_DURATION,
-        removesFromViewOnPush
-    ) {
-    }
-
-    constructor(duration: Long) : this(duration, true) {}
-
     init {
-        animationDuration = duration
+        this.animationDuration = animationDuration
+        this.removesFromViewOnPush = removesFromViewOnPush
     }
 
     override fun saveToBundle(bundle: Bundle) {
@@ -81,12 +76,6 @@ abstract class AnimatorChangeHandler(
 
     /**
      * Should be overridden to return the Animator to use while replacing Views.
-     *
-     * @param container The container these Views are hosted in.
-     * @param from The previous View in the container or `null` if there was no Controller before this transition
-     * @param to The next View that should be put in the container or `null` if no Controller is being transitioned to
-     * @param isPush True if this is a push transaction, false if it's a pop.
-     * @param toAddedToContainer True if the "to" view was added to the container as a part of this ChangeHandler. False if it was already in the hierarchy.
      */
     protected abstract fun getAnimator(
         container: ViewGroup,

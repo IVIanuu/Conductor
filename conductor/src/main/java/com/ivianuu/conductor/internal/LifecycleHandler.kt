@@ -3,7 +3,6 @@ package com.ivianuu.conductor.internal
 import android.annotation.TargetApi
 import android.app.Activity
 import android.app.Application.ActivityLifecycleCallbacks
-import android.arch.lifecycle.ViewModelStore
 import android.content.Context
 import android.content.Intent
 import android.content.IntentSender
@@ -20,8 +19,6 @@ import android.view.ViewGroup
 import com.ivianuu.conductor.ActivityHostedRouter
 import com.ivianuu.conductor.Router
 import kotlinx.android.parcel.Parcelize
-import java.util.*
-import kotlin.collections.ArrayList
 
 class LifecycleHandler : Fragment(), ActivityLifecycleCallbacks {
 
@@ -183,8 +180,8 @@ class LifecycleHandler : Fragment(), ActivityLifecycleCallbacks {
     override fun shouldShowRequestPermissionRationale(permission: String): Boolean {
         for (router in routerMap.values) {
             val handled = router.handleRequestedPermission(permission)
-            if (handled != null) {
-                return handled
+            if (handled) {
+                return true
             }
         }
         return super.shouldShowRequestPermissionRationale(permission)

@@ -11,14 +11,14 @@ import com.ivianuu.conductor.ControllerChangeHandler
 /**
  * A [ControllerChangeHandler] that will instantly swap Views with no animations or transitions.
  */
-class SimpleSwapChangeHandler @JvmOverloads constructor(private var removesFromViewOnPush: Boolean = true) :
-    ControllerChangeHandler(), OnAttachStateChangeListener {
+class SimpleSwapChangeHandler @JvmOverloads constructor(
+    private var removesFromViewOnPush: Boolean = true
+) : ControllerChangeHandler(), OnAttachStateChangeListener {
 
     override val isReusable: Boolean
         get() = true
 
     private var canceled = false
-
     private var container: ViewGroup? = null
     private var changeListener: ControllerChangeHandler.ControllerChangeCompletedListener? = null
 
@@ -34,7 +34,6 @@ class SimpleSwapChangeHandler @JvmOverloads constructor(private var removesFromV
 
     override fun onAbortPush(newHandler: ControllerChangeHandler, newTop: Controller?) {
         super.onAbortPush(newHandler, newTop)
-
         canceled = true
     }
 

@@ -9,28 +9,20 @@ import android.view.View
 import android.view.ViewGroup
 import com.ivianuu.conductor.changehandler.SharedElementTransitionChangeHandler
 import com.ivianuu.conductor.internal.TransitionUtils
-import java.util.*
+import kotlin.collections.ArrayList
 
 @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-class ArcFadeMoveChangeHandler : SharedElementTransitionChangeHandler {
-
-    private val sharedElementNames = ArrayList<String>()
-
-    constructor() {}
-
-    constructor(vararg sharedElementNames: String) {
-        Collections.addAll(this.sharedElementNames, *sharedElementNames)
-    }
+class ArcFadeMoveChangeHandler @JvmOverloads constructor(
+    private val sharedElementNames: ArrayList<String> = ArrayList()
+) : SharedElementTransitionChangeHandler() {
 
     override fun saveToBundle(bundle: Bundle) {
         super.saveToBundle(bundle)
-
         bundle.putStringArrayList(KEY_SHARED_ELEMENT_NAMES, sharedElementNames)
     }
 
     override fun restoreFromBundle(bundle: Bundle) {
         super.restoreFromBundle(bundle)
-
         sharedElementNames.addAll(bundle.getStringArrayList(KEY_SHARED_ELEMENT_NAMES))
     }
 
@@ -39,9 +31,7 @@ class ArcFadeMoveChangeHandler : SharedElementTransitionChangeHandler {
         from: View?,
         to: View?,
         isPush: Boolean
-    ): Transition? {
-        return Fade(Fade.OUT)
-    }
+    ) = Fade(Fade.OUT)
 
     override fun getSharedElementTransition(
         container: ViewGroup,
@@ -84,9 +74,7 @@ class ArcFadeMoveChangeHandler : SharedElementTransitionChangeHandler {
         from: View?,
         to: View?,
         isPush: Boolean
-    ): Transition? {
-        return Fade(Fade.IN)
-    }
+    ) = Fade(Fade.IN)
 
     override fun configureSharedElements(
         container: ViewGroup,
@@ -99,12 +87,9 @@ class ArcFadeMoveChangeHandler : SharedElementTransitionChangeHandler {
         }
     }
 
-    override fun allowTransitionOverlap(isPush: Boolean): Boolean {
-        return false
-    }
+    override fun allowTransitionOverlap(isPush: Boolean) = false
 
     companion object {
-
-        private val KEY_SHARED_ELEMENT_NAMES = "ArcFadeMoveChangeHandler.sharedElementNames"
+        private const val KEY_SHARED_ELEMENT_NAMES = "ArcFadeMoveChangeHandler.sharedElementNames"
     }
 }

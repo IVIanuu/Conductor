@@ -17,7 +17,7 @@ import com.ivianuu.conductor.ControllerChangeHandler
 @TargetApi(Build.VERSION_CODES.LOLLIPOP)
 abstract class TransitionChangeHandler : ControllerChangeHandler() {
 
-    internal var canceled = false
+    private var canceled = false
     private var needsImmediateCompletion = false
 
     interface OnTransitionPreparedListener {
@@ -26,11 +26,6 @@ abstract class TransitionChangeHandler : ControllerChangeHandler() {
 
     /**
      * Should be overridden to return the Transition to use while replacing Views.
-     *
-     * @param container The container these Views are hosted in
-     * @param from      The previous View in the container or `null` if there was no Controller before this transition
-     * @param to        The next View that should be put in the container or `null` if no Controller is being transitioned to
-     * @param isPush    True if this is a push transaction, false if it's a pop
      */
     protected abstract fun getTransition(
         container: ViewGroup,
@@ -108,12 +103,6 @@ abstract class TransitionChangeHandler : ControllerChangeHandler() {
     /**
      * Called before a transition occurs. This can be used to reorder views, set their transition names, etc. The transition will begin
      * when `onTransitionPreparedListener` is called.
-     *
-     * @param container  The container these Views are hosted in
-     * @param from       The previous View in the container or `null` if there was no Controller before this transition
-     * @param to         The next View that should be put in the container or `null` if no Controller is being transitioned to
-     * @param transition The transition that is being prepared for
-     * @param isPush     True if this is a push transaction, false if it's a pop
      */
     open fun prepareForTransition(
         container: ViewGroup,
@@ -129,12 +118,6 @@ abstract class TransitionChangeHandler : ControllerChangeHandler() {
     /**
      * This should set all view properties needed for the transition to work properly. By default it removes the "from" view
      * and adds the "to" view.
-     *
-     * @param container  The container these Views are hosted in
-     * @param from       The previous View in the container or `null` if there was no Controller before this transition
-     * @param to         The next View that should be put in the container or `null` if no Controller is being transitioned to
-     * @param transition The transition with which `TransitionManager.beginDelayedTransition` has been called. This will be null only if another ControllerChangeHandler immediately overrides this one.
-     * @param isPush     True if this is a push transaction, false if it's a pop
      */
     open fun executePropertyChanges(
         container: ViewGroup,

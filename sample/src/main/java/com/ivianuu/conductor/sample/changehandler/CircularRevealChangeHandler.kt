@@ -16,10 +16,10 @@ import com.ivianuu.conductor.changehandler.AnimatorChangeHandler
 @TargetApi(Build.VERSION_CODES.LOLLIPOP)
 open class CircularRevealChangeHandler : AnimatorChangeHandler {
 
-    private var cx: Int = 0
-    private var cy: Int = 0
+    private var cx = 0
+    private var cy = 0
 
-    constructor() {}
+    constructor()
 
     /**
      * Constructor that will create a circular reveal from the center of the fromView parameter.
@@ -31,8 +31,7 @@ open class CircularRevealChangeHandler : AnimatorChangeHandler {
         fromView: View,
         containerView: View,
         removesFromViewOnPush: Boolean
-    ) : this(fromView, containerView, AnimatorChangeHandler.DEFAULT_ANIMATION_DURATION, true) {
-    }
+    ) : this(fromView, containerView, AnimatorChangeHandler.DEFAULT_ANIMATION_DURATION, true)
 
     /**
      * Constructor that will create a circular reveal from the center of the fromView parameter.

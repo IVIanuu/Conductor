@@ -46,14 +46,12 @@ object TransitionUtils {
         return null
     }
 
-    fun setEpicenter(transition: Transition, view: View?) {
-        if (view != null) {
-            val epicenter = Rect()
-            getBoundsOnScreen(view, epicenter)
-            transition.epicenterCallback = object : Transition.EpicenterCallback() {
-                override fun onGetEpicenter(transition: Transition): Rect {
-                    return epicenter
-                }
+    fun setEpicenter(transition: Transition, view: View) {
+        val epicenter = Rect()
+        getBoundsOnScreen(view, epicenter)
+        transition.epicenterCallback = object : Transition.EpicenterCallback() {
+            override fun onGetEpicenter(transition: Transition): Rect {
+                return epicenter
             }
         }
     }
@@ -77,10 +75,7 @@ object TransitionUtils {
         addTargets(transition, sharedViews)
     }
 
-    fun addTargets(transition: Transition?, views: List<View>) {
-        if (transition == null) {
-            return
-        }
+    fun addTargets(transition: Transition, views: List<View>) {
         if (transition is TransitionSet) {
             val set = transition as TransitionSet?
             val numTransitions = set!!.transitionCount
@@ -99,7 +94,7 @@ object TransitionUtils {
         }
     }
 
-    fun replaceTargets(transition: Transition, oldTargets: List<View>, newTargets: List<View>?) {
+    fun replaceTargets(transition: Transition, oldTargets: List<View>, newTargets: List<View>) {
         if (transition is TransitionSet) {
             val numTransitions = transition.transitionCount
             for (i in 0 until numTransitions) {
@@ -109,9 +104,9 @@ object TransitionUtils {
         } else if (!TransitionUtils.hasSimpleTarget(transition)) {
             val targets = transition.targets
             if (targets != null && targets.size == oldTargets.size && targets.containsAll(oldTargets)) {
-                val targetCount = newTargets?.size ?: 0
+                val targetCount = newTargets.size
                 for (i in 0 until targetCount) {
-                    transition.addTarget(newTargets!![i])
+                    transition.addTarget(newTargets[i])
                 }
                 for (i in oldTargets.indices.reversed()) {
                     transition.removeTarget(oldTargets[i])
@@ -149,7 +144,7 @@ object TransitionUtils {
         return false
     }
 
-    fun hasSimpleTarget(transition: Transition): Boolean {
+    private fun hasSimpleTarget(transition: Transition): Boolean {
         return (!isNullOrEmpty(transition.targetIds)
                 || !isNullOrEmpty(transition.targetNames)
                 || !isNullOrEmpty(transition.targetTypes))

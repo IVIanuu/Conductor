@@ -5,12 +5,11 @@ import com.ivianuu.conductor.changehandler.TransitionChangeHandlerCompat
 
 class ArcFadeMoveChangeHandlerCompat : TransitionChangeHandlerCompat {
 
-    constructor() : super() {}
+    constructor() : super()
 
     constructor(vararg transitionNames: String) : super(
-        ArcFadeMoveChangeHandler(*transitionNames),
+        ArcFadeMoveChangeHandler(ArrayList(transitionNames.toList())),
         FadeChangeHandler()
-    ) {
-    }
+    )
 
 }

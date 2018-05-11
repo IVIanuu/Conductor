@@ -11,17 +11,10 @@ import com.ivianuu.conductor.ControllerChangeHandler
 /**
  * An [AnimatorChangeHandler] that will cross fade two views
  */
-class FadeChangeHandler : AnimatorChangeHandler {
-
-    constructor() {}
-
-    constructor(removesFromViewOnPush: Boolean) : super(removesFromViewOnPush) {}
-
-    constructor(duration: Long, removesFromViewOnPush: Boolean) : super(
-        DEFAULT_ANIMATION_DURATION,
-        removesFromViewOnPush
-    ) {
-    }
+class FadeChangeHandler @JvmOverloads constructor(
+    animationDuration: Long = DEFAULT_ANIMATION_DURATION,
+    removesFromViewOnPush: Boolean = true
+) : AnimatorChangeHandler(animationDuration, removesFromViewOnPush) {
 
     override fun getAnimator(
         container: ViewGroup,

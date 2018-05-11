@@ -87,7 +87,8 @@ class RouterTransaction {
         }
     }
 
-    internal fun ensureValidIndex(indexer: TransactionIndexer) {
+    internal fun ensureValidIndex(indexer: TransactionIndexer?) {
+        if (indexer == null) throw IllegalStateException("indexer is null")
         if (transactionIndex == INVALID_INDEX) {
             transactionIndex = indexer.nextIndex()
         }

@@ -71,9 +71,9 @@ internal class Backstack : Iterable<RouterTransaction> {
     }
 
     fun restoreInstanceState(savedInstanceState: Bundle) {
-        val entryBundles = savedInstanceState.getParcelableArrayList<Bundle>(KEY_ENTRIES)
+        val entryBundles = savedInstanceState
+            .getParcelableArrayList<Bundle>(KEY_ENTRIES)?.reversed()
         if (entryBundles != null) {
-            entryBundles.reverse()
             for (transactionBundle in entryBundles) {
                 backstack.push(RouterTransaction(transactionBundle))
             }

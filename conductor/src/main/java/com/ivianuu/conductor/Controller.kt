@@ -36,21 +36,26 @@ abstract class Controller @JvmOverloads protected constructor(args: Bundle? = nu
 
     private var viewState: Bundle? = null
     private var savedInstanceState: Bundle? = null
+
     /**
      * Returns whether or not this Controller is currently in the process of being destroyed.
      */
+
     var isBeingDestroyed = false
         private set
     /**
      * Returns whether or not this Controller has been destroyed.
      */
+
     var isDestroyed = false
         private set
+
     /**
      * Returns whether or not this Controller is currently attached to a host View.
      */
     var isAttached = false
         private set
+
     private var hasOptionsMenu = false
     private var optionsMenuHidden = false
     internal var viewIsAttached = false
@@ -189,7 +194,7 @@ abstract class Controller @JvmOverloads protected constructor(args: Bundle? = nu
      */
     var targetController: Controller?
         get() = if (targetInstanceId != null) {
-            router!!.rootRouter.getControllerWithInstanceId(targetInstanceId!!)
+            requireRouter().rootRouter.getControllerWithInstanceId(targetInstanceId!!)
         } else null
         set(target) {
             if (targetInstanceId != null) {
@@ -489,7 +494,7 @@ abstract class Controller @JvmOverloads protected constructor(args: Bundle? = nu
         for (transaction in childTransactions) {
             val childController = transaction.controller
 
-            if (childController.isAttached && childController.router!!.handleBack()) {
+            if (childController.isAttached && childController.requireRouter().handleBack()) {
                 return true
             }
         }
@@ -544,7 +549,7 @@ abstract class Controller @JvmOverloads protected constructor(args: Bundle? = nu
         this.hasOptionsMenu = hasOptionsMenu
 
         if (invalidate) {
-            router!!.invalidateOptionsMenu()
+            requireRouter().invalidateOptionsMenu()
         }
     }
 
@@ -559,7 +564,7 @@ abstract class Controller @JvmOverloads protected constructor(args: Bundle? = nu
         this.optionsMenuHidden = optionsMenuHidden
 
         if (invalidate) {
-            router!!.invalidateOptionsMenu()
+            requireRouter().invalidateOptionsMenu()
         }
     }
 
@@ -643,7 +648,7 @@ abstract class Controller @JvmOverloads protected constructor(args: Bundle? = nu
     }
 
     internal fun attach(view: View) {
-        attachedToUnownedParent = router == null || view.parent != router!!.container
+        attachedToUnownedParent = router == null || view.parent != requireRouter().container
         if (attachedToUnownedParent) {
             return
         }
@@ -658,7 +663,7 @@ abstract class Controller @JvmOverloads protected constructor(args: Bundle? = nu
         onAttach(view)
 
         if (hasOptionsMenu && !optionsMenuHidden) {
-            router!!.invalidateOptionsMenu()
+            requireRouter().invalidateOptionsMenu()
         }
 
         notifyLifecycleListeners { it.postAttach(this, view) }
@@ -725,8 +730,9 @@ abstract class Controller @JvmOverloads protected constructor(args: Bundle? = nu
     }
 
     internal fun inflate(parent: ViewGroup): View {
-        if (view != null && view?.parent != null && view?.parent != parent) {
-            detach(view!!, true, false)
+        val oldView = view
+        if (oldView != null && oldView.parent != null && oldView.parent != parent) {
+            detach(oldView, true, false)
             removeViewReference()
         }
 
@@ -744,7 +750,7 @@ abstract class Controller @JvmOverloads protected constructor(args: Bundle? = nu
 
             restoreViewState(view)
 
-            viewAttachHandler = ViewAttachHandler(object : ViewAttachListener {
+            val viewAttachHandler = ViewAttachHandler(object : ViewAttachListener {
                 override fun onAttached() {
                     viewIsAttached = true
                     viewWasDetached = false
@@ -767,7 +773,8 @@ abstract class Controller @JvmOverloads protected constructor(args: Bundle? = nu
                 }
             })
 
-            viewAttachHandler?.listenForAttach(view)
+            viewAttachHandler.listenForAttach(view)
+            this.viewAttachHandler = viewAttachHandler
         } else if (retainViewMode == RetainViewMode.RETAIN_DETACH) {
             restoreChildControllerHosts()
         }
@@ -844,7 +851,7 @@ abstract class Controller @JvmOverloads protected constructor(args: Bundle? = nu
         if (viewState != null) {
             view.restoreHierarchyState(viewState.getSparseParcelableArray(KEY_VIEW_STATE_HIERARCHY))
             val savedViewState = viewState.getBundle(KEY_VIEW_STATE_BUNDLE)
-            savedViewState!!.classLoader = javaClass.classLoader
+            savedViewState.classLoader = javaClass.classLoader
             onRestoreViewState(view, savedViewState)
 
             restoreChildControllerHosts()
@@ -854,7 +861,9 @@ abstract class Controller @JvmOverloads protected constructor(args: Bundle? = nu
     }
 
     internal fun saveInstanceState(): Bundle {
-        if (!hasSavedViewState && view != null) view?.let(this::saveViewState)
+        if (!hasSavedViewState) {
+            view?.let(this::saveViewState)
+        }
 
         val outState = Bundle()
         outState.putString(KEY_CLASS_NAME, javaClass.name)
@@ -961,8 +970,9 @@ abstract class Controller @JvmOverloads protected constructor(args: Bundle? = nu
 
         if (isBeingDestroyed && !viewIsAttached && !isAttached && destroyedView != null) {
             val view = destroyedView!!.get()
-            if (router!!.container != null && view != null && view.parent == router!!.container) {
-                router!!.container!!.removeView(view)
+            val container = requireRouter().container
+            if (container != null && view != null && view.parent == container) {
+                container.removeView(view)
             }
             destroyedView = null
         }
