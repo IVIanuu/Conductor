@@ -38,22 +38,22 @@ abstract class Controller @JvmOverloads protected constructor(args: Bundle? = nu
     /**
      * Returns whether or not this Controller is currently in the process of being destroyed.
      */
-    var isBeingDestroyed= false
+    var isBeingDestroyed = false
         private set
     /**
      * Returns whether or not this Controller has been destroyed.
      */
-    var isDestroyed= false
+    var isDestroyed = false
         private set
     /**
      * Returns whether or not this Controller is currently attached to a host View.
      */
-    var isAttached= false
+    var isAttached = false
         private set
-    private var hasOptionsMenu= false
-    private var optionsMenuHidden= false
-    internal var viewIsAttached= false
-    internal var viewWasDetached= false
+    private var hasOptionsMenu = false
+    private var optionsMenuHidden = false
+    internal var viewIsAttached = false
+    internal var viewWasDetached = false
 
     var router: Router? = null
         internal set(value) {
@@ -103,9 +103,9 @@ abstract class Controller @JvmOverloads protected constructor(args: Bundle? = nu
         private set
 
     private var targetInstanceId: String? = null
-    internal var needsAttach= false
-    private var attachedToUnownedParent= false
-    private var hasSavedViewState= false
+    internal var needsAttach = false
+    private var attachedToUnownedParent = false
+    private var hasSavedViewState = false
     internal var isDetachFrozen = false
         set(value) {
             if (field != value) {
@@ -150,8 +150,8 @@ abstract class Controller @JvmOverloads protected constructor(args: Bundle? = nu
     private val requestedPermissions = mutableListOf<String>()
     private val onRouterSetListeners = mutableListOf<((Router) -> Unit)>()
     private var destroyedView: WeakReference<View>? = null
-    private var isPerformingExitTransition= false
-    private var isCreated= false
+    private var isPerformingExitTransition = false
+    private var isCreated = false
 
     /**
      * Returns the host Activity of this Controller's [Router] or `null` if this

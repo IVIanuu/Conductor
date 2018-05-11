@@ -170,7 +170,7 @@ abstract class SharedElementTransitionChangeHandler : TransitionChangeHandler() 
         onTransitionPreparedListener: TransitionChangeHandler.OnTransitionPreparedListener
     ) {
         val onPreDrawListener = object : OnPreDrawListener {
-            internal var addedSubviewListeners= false
+            internal var addedSubviewListeners = false
 
             override fun onPreDraw(): Boolean {
                 val foundViews = mutableListOf<View>()

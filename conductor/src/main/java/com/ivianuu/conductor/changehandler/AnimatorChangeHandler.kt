@@ -221,7 +221,7 @@ abstract class AnimatorChangeHandler(
         internal val addingToView: Boolean,
         internal val changeListener: ControllerChangeHandler.ControllerChangeCompletedListener
     ) : ViewTreeObserver.OnPreDrawListener {
-        private var hasRun= false
+        private var hasRun = false
 
         override fun onPreDraw(): Boolean {
             onReadyOrAborted()

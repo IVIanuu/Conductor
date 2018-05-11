@@ -17,8 +17,8 @@ import com.ivianuu.conductor.ControllerChangeHandler
 @TargetApi(Build.VERSION_CODES.LOLLIPOP)
 abstract class TransitionChangeHandler : ControllerChangeHandler() {
 
-    internal var canceled= false
-    private var needsImmediateCompletion= false
+    internal var canceled = false
+    private var needsImmediateCompletion = false
 
     interface OnTransitionPreparedListener {
         fun onPrepared()

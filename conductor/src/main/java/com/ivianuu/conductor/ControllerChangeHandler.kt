@@ -14,7 +14,7 @@ import com.ivianuu.conductor.internal.ClassUtils
 abstract class ControllerChangeHandler {
 
     internal var forceRemoveViewOnPush= false
-    private var hasBeenUsed= false
+    private var hasBeenUsed = false
 
     /**
      * Returns whether or not this is a reusable ControllerChangeHandler. Defaults to false and should
