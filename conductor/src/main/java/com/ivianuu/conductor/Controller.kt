@@ -206,11 +206,6 @@ abstract class Controller @JvmOverloads protected constructor(args: Bundle? = nu
      * Called when the controller is ready to display its view. A valid view must be returned. The standard body
      * for this method will be `return inflater.inflate(R.layout.my_layout, container, false);`, plus
      * any binding code.
-     *
-     * @param inflater  The LayoutInflater that should be used to inflate views
-     * @param container The parent view that this Controller's view will eventually be attached to.
-     * This Controller's view should NOT be added in this method. It is simply passed in
-     * so that valid LayoutParams can be used during inflation.
      */
     protected abstract fun onCreateView(
         inflater: LayoutInflater,
@@ -223,9 +218,6 @@ abstract class Controller @JvmOverloads protected constructor(args: Bundle? = nu
      * this container exists yet, it will be created. Note that multiple routers should not exist
      * in the same container unless a lot of care is taken to maintain order between them. Avoid using
      * the same container unless you have a great reason to do so (ex: ViewPagers).
-     *
-     * @param container The ViewGroup that hosts the child Router
-     * @param tag The router's tag or `null` if none is needed
      */
     @JvmOverloads fun getChildRouter(container: ViewGroup, tag: String? = null): Router {
         return getChildRouter(container, tag, true)!!
@@ -237,10 +229,6 @@ abstract class Controller @JvmOverloads protected constructor(args: Bundle? = nu
      * between them. Avoid using the same container unless you have a great reason to do so (ex: ViewPagers).
      * The only time this method will return `null` is when the child router does not exist prior
      * to calling this method and the createIfNeeded parameter is set to false.
-     *
-     * @param container The ViewGroup that hosts the child Router
-     * @param tag The router's tag or `null` if none is needed
-     * @param createIfNeeded If true, a router will be created if one does not yet exist. Else `null` will be returned in this case.
      */
     fun getChildRouter(container: ViewGroup, tag: String?, createIfNeeded: Boolean): Router? {
         val containerId = container.id
@@ -274,8 +262,6 @@ abstract class Controller @JvmOverloads protected constructor(args: Bundle? = nu
     /**
      * Removes a child [Router] from this Controller. When removed, all Controllers currently managed by
      * the [Router] will be destroyed.
-     *
-     * @param childRouter The router to be removed
      */
     fun removeChildRouter(childRouter: Router) {
         if (childRouter is ControllerHostedRouter && childRouters.remove(childRouter)) {
@@ -286,8 +272,6 @@ abstract class Controller @JvmOverloads protected constructor(args: Bundle? = nu
     /**
      * Returns the Controller with the given instance id or `null` if no such Controller
      * exists. May return the Controller itself or a matching descendant
-     *
-     * @param instanceId The instance ID being searched for
      */
     internal fun findController(instanceId: String): Controller? {
         if (this.instanceId == instanceId) {
@@ -315,16 +299,11 @@ abstract class Controller @JvmOverloads protected constructor(args: Bundle? = nu
     /**
      * Called when this Controller's View is being destroyed. This should overridden to unbind the View
      * from any local variables.
-     *
-     * @param view The View to which this Controller should be bound.
      */
     protected open fun onDestroyView(view: View) {}
 
     /**
      * Called when this Controller begins the process of being swapped in or out of the host view.
-     *
-     * @param changeHandler The [ControllerChangeHandler] that's managing the swap
-     * @param changeType    The type of change that's occurring
      */
     protected open fun onChangeStarted(
         changeHandler: ControllerChangeHandler,
@@ -334,9 +313,6 @@ abstract class Controller @JvmOverloads protected constructor(args: Bundle? = nu
 
     /**
      * Called when this Controller completes the process of being swapped in or out of the host view.
-     *
-     * @param changeHandler The [ControllerChangeHandler] that's managing the swap
-     * @param changeType    The type of change that occurred
      */
     protected open fun onChangeEnded(
         changeHandler: ControllerChangeHandler,
@@ -348,15 +324,11 @@ abstract class Controller @JvmOverloads protected constructor(args: Bundle? = nu
 
     /**
      * Called when this Controller is attached to its host ViewGroup
-     *
-     * @param view The View for this Controller (passed for convenience)
      */
     protected open fun onAttach(view: View) {}
 
     /**
      * Called when this Controller is detached from its host ViewGroup
-     *
-     * @param view The View for this Controller (passed for convenience)
      */
     protected open fun onDetach(view: View) {}
 
@@ -389,33 +361,23 @@ abstract class Controller @JvmOverloads protected constructor(args: Bundle? = nu
      * Called to save this Controller's View state. As Views can be detached and destroyed as part of the
      * Controller lifecycle (ex: when another Controller has been pushed on top of it), care should be taken
      * to save anything needed to reconstruct the View.
-     *
-     * @param view     This Controller's View, passed for convenience
-     * @param outState The Bundle into which the View state should be saved
      */
     protected open fun onSaveViewState(view: View, outState: Bundle) {}
 
     /**
      * Restores data that was saved in the [.onSaveViewState] method. This should be overridden
      * to restore the View's state to where it was before it was destroyed.
-     *
-     * @param view           This Controller's View, passed for convenience
-     * @param savedViewState The bundle that has data to be restored
      */
     protected open fun onRestoreViewState(view: View, savedViewState: Bundle) {}
 
     /**
      * Called to save this Controller's state in the event that its host Activity is destroyed.
-     *
-     * @param outState The Bundle into which data should be saved
      */
     protected open fun onSaveInstanceState(outState: Bundle) {}
 
     /**
      * Restores data that was saved in the [.onSaveInstanceState] method. This should be overridden
      * to restore this Controller's state to where it was before it was destroyed.
-     *
-     * @param savedInstanceState The bundle that has data to be restored
      */
     protected open fun onRestoreInstanceState(savedInstanceState: Bundle) {}
 
@@ -465,8 +427,6 @@ abstract class Controller @JvmOverloads protected constructor(args: Bundle? = nu
     /**
      * Registers this Controller to handle onActivityResult responses. Calling this method is NOT
      * necessary when calling [.startActivityForResult]
-     *
-     * @param requestCode The request code being registered for.
      */
     fun registerForActivityResult(requestCode: Int) {
         executeWithRouter { it.registerForActivityResult(instanceId, requestCode) }
@@ -475,10 +435,6 @@ abstract class Controller @JvmOverloads protected constructor(args: Bundle? = nu
     /**
      * Should be overridden if this Controller has called startActivityForResult and needs to handle
      * the result.
-     *
-     * @param requestCode The requestCode passed to startActivityForResult
-     * @param resultCode  The resultCode that was returned to the host Activity's onActivityResult method
-     * @param data        The data Intent that was returned to the host Activity's onActivityResult method
      */
     open fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {}
 
@@ -496,8 +452,6 @@ abstract class Controller @JvmOverloads protected constructor(args: Bundle? = nu
     /**
      * Gets whether you should show UI with rationale for requesting a permission.
      * {@see android.app.Activity#shouldShowRequestPermissionRationale(String)}
-     *
-     * @param permission A permission this Controller has requested
      */
     fun shouldShowRequestPermissionRationale(permission: String): Boolean {
         return Build.VERSION.SDK_INT >= 23 && activity!!.shouldShowRequestPermissionRationale(permission)
@@ -505,10 +459,6 @@ abstract class Controller @JvmOverloads protected constructor(args: Bundle? = nu
 
     /**
      * Should be overridden if this Controller has requested runtime permissions and needs to handle the user's response.
-     *
-     * @param requestCode  The requestCode that was used to request the permissions
-     * @param permissions  The array of permissions requested
-     * @param grantResults The results for each permission requested
      */
     open fun onRequestPermissionsResult(
         requestCode: Int,
@@ -542,8 +492,6 @@ abstract class Controller @JvmOverloads protected constructor(args: Bundle? = nu
 
     /**
      * Adds a listener for all of this Controller's lifecycle events
-     *
-     * @param lifecycleListener The listener
      */
     fun addLifecycleListener(lifecycleListener: LifecycleListener) {
         if (!lifecycleListeners.contains(lifecycleListener)) {
@@ -553,8 +501,6 @@ abstract class Controller @JvmOverloads protected constructor(args: Bundle? = nu
 
     /**
      * Removes a previously added lifecycle listener
-     *
-     * @param lifecycleListener The listener to be removed
      */
     fun removeLifecycleListener(lifecycleListener: LifecycleListener) {
         lifecycleListeners.remove(lifecycleListener)
@@ -584,8 +530,6 @@ abstract class Controller @JvmOverloads protected constructor(args: Bundle? = nu
     /**
      * Registers/unregisters for participation in populating the options menu by receiving options-related
      * callbacks, such as [.onCreateOptionsMenu]
-     *
-     * @param hasOptionsMenu If true, this controller's options menu callbacks will be called.
      */
     fun setHasOptionsMenu(hasOptionsMenu: Boolean) {
         val invalidate = isAttached && !optionsMenuHidden && this.hasOptionsMenu != hasOptionsMenu
@@ -601,8 +545,6 @@ abstract class Controller @JvmOverloads protected constructor(args: Bundle? = nu
      * Sets whether or not this controller's menu items should be visible. This is useful for hiding the
      * controller's options menu items when its UI is hidden, and not just when it is detached from the
      * window (the default).
-     *
-     * @param optionsMenuHidden Defaults to false. If true, this controller's menu items will not be shown.
      */
     fun setOptionsMenuHidden(optionsMenuHidden: Boolean) {
         val invalidate = isAttached && hasOptionsMenu && this.optionsMenuHidden != optionsMenuHidden
@@ -617,17 +559,12 @@ abstract class Controller @JvmOverloads protected constructor(args: Bundle? = nu
     /**
      * Adds option items to the host Activity's standard options menu. This will only be called if
      * [.setHasOptionsMenu] has been called.
-     *
-     * @param menu The menu into which your options should be placed.
-     * @param inflater The inflater that can be used to inflate your menu items.
      */
     open fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {}
 
     /**
      * Prepare the screen's options menu to be displayed. This is called directly before showing the
      * menu and can be used modify its contents.
-     *
-     * @param menu The menu that will be displayed
      */
     open fun onPrepareOptionsMenu(menu: Menu) {}
 

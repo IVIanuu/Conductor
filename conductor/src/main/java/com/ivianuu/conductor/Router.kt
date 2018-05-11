@@ -66,21 +66,12 @@ abstract class Router {
     /**
      * This should be called by the host Activity when its onActivityResult method is called if the instanceId
      * of the controller that called startActivityForResult is not known.
-     *
-     * @param requestCode The Activity's onActivityResult requestCode
-     * @param resultCode  The Activity's onActivityResult resultCode
-     * @param data        The Activity's onActivityResult data
      */
     abstract fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?)
 
     /**
      * This should be called by the host Activity when its onRequestPermissionsResult method is called. The call will be forwarded
      * to the [Controller] with the instanceId passed in.
-     *
-     * @param instanceId   The instanceId of the Controller to which this result should be forwarded
-     * @param requestCode  The Activity's onRequestPermissionsResult requestCode
-     * @param permissions  The Activity's onRequestPermissionsResult permissions
-     * @param grantResults The Activity's onRequestPermissionsResult grantResults
      */
     fun onRequestPermissionsResult(
         instanceId: String,
@@ -166,9 +157,6 @@ abstract class Router {
 
     /**
      * Pushes a new [Controller] to the backstack
-     *
-     * @param transaction The transaction detailing what should be pushed, including the [Controller],
-     * and its push and pop [ControllerChangeHandler], and its tag.
      */
     fun pushController(transaction: RouterTransaction) {
         ensureMainThread()
@@ -180,9 +168,6 @@ abstract class Router {
 
     /**
      * Replaces this Router's top [Controller] with a new [Controller]
-     *
-     * @param transaction The transaction detailing what should be pushed, including the [Controller],
-     * and its push and pop [ControllerChangeHandler], and its tag.
      */
     fun replaceTopController(transaction: RouterTransaction) {
         ensureMainThread()
@@ -300,9 +285,6 @@ abstract class Router {
 
     /**
      * Sets the root Controller. If any [Controller]s are currently in the backstack, they will be removed.
-     *
-     * @param transaction The transaction detailing what should be pushed, including the [Controller],
-     * and its push and pop [ControllerChangeHandler], and its tag.
      */
     fun setRoot(transaction: RouterTransaction) {
         ensureMainThread()
@@ -314,8 +296,6 @@ abstract class Router {
     /**
      * Returns the hosted Controller with the given instance id or `null` if no such
      * Controller exists in this Router.
-     *
-     * @param instanceId The instance ID being searched for
      */
     fun getControllerWithInstanceId(instanceId: String): Controller? {
         for (transaction in backstack) {
@@ -330,8 +310,6 @@ abstract class Router {
     /**
      * Returns the hosted Controller that was pushed with the given tag or `null` if no
      * such Controller exists in this Router.
-     *
-     * @param tag The tag being searched for
      */
     fun getControllerWithTag(tag: String): Controller? {
         for (transaction in backstack) {
@@ -357,9 +335,6 @@ abstract class Router {
     /**
      * Sets the backstack, transitioning from the current top controller to the top of the new stack (if different)
      * using the passed [ControllerChangeHandler]
-     *
-     * @param newBackstack  The new backstack
-     * @param changeHandler An optional change handler to be used to handle the root view of transition
      */
     open fun setBackstack(
         newBackstack: List<RouterTransaction>,
@@ -471,22 +446,18 @@ abstract class Router {
 
     /**
      * Adds a listener for all of this Router's [Controller] change events
-     *
-     * @param changeListener The listener
      */
-    fun addChangeListener(changeListener: ControllerChangeListener) {
-        if (!changeListeners.contains(changeListener)) {
-            changeListeners.add(changeListener)
+    fun addChangeListener(listener: ControllerChangeListener) {
+        if (!changeListeners.contains(listener)) {
+            changeListeners.add(listener)
         }
     }
 
     /**
      * Removes a previously added listener
-     *
-     * @param changeListener The listener to be removed
      */
-    fun removeChangeListener(changeListener: ControllerChangeListener) {
-        changeListeners.remove(changeListener)
+    fun removeChangeListener(listener: ControllerChangeListener) {
+        changeListeners.remove(listener)
     }
 
     /**

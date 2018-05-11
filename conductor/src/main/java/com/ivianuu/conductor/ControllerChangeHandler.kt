@@ -27,12 +27,6 @@ abstract class ControllerChangeHandler {
 
     /**
      * Responsible for swapping Views from one Controller to another.
-     *
-     * @param container      The container these Views are hosted in.
-     * @param from           The previous View in the container or `null` if there was no Controller before this transition
-     * @param to             The next View that should be put in the container or `null` if no Controller is being transitioned to
-     * @param isPush         True if this is a push transaction, false if it's a pop.
-     * @param changeListener This listener must be called when any transitions or animations are completed.
      */
     abstract fun performChange(
         container: ViewGroup,
@@ -48,25 +42,17 @@ abstract class ControllerChangeHandler {
 
     /**
      * Saves any data about this handler to a Bundle in case the application is killed.
-     *
-     * @param bundle The Bundle into which data should be stored.
      */
     open fun saveToBundle(bundle: Bundle) {}
 
     /**
      * Restores data that was saved in the [.saveToBundle] method.
-     *
-     * @param bundle The bundle that has data to be restored
      */
     open fun restoreFromBundle(bundle: Bundle) {}
 
     /**
      * Will be called on change handlers that push a controller if the controller being pushed is
      * popped before it has completed.
-     *
-     * @param newHandler The change handler that has caused this push to be aborted
-     * @param newTop     The Controller that will now be at the top of the backstack or `null`
-     * if there will be no new Controller at the top
      */
     open fun onAbortPush(newHandler: ControllerChangeHandler, newTop: Controller?) {}
 
@@ -128,12 +114,6 @@ abstract class ControllerChangeHandler {
     interface ControllerChangeListener {
         /**
          * Called when a [ControllerChangeHandler] has started changing [Controller]s
-         *
-         * @param to        The new Controller or `null` if no Controller is being transitioned to
-         * @param from      The old Controller or `null` if there was no Controller before this transition
-         * @param isPush    True if this is a push operation, or false if it's a pop.
-         * @param container The containing ViewGroup
-         * @param handler   The change handler being used.
          */
         fun onChangeStarted(
             to: Controller?,
@@ -145,12 +125,6 @@ abstract class ControllerChangeHandler {
 
         /**
          * Called when a [ControllerChangeHandler] has completed changing [Controller]s
-         *
-         * @param to        The new Controller or `null` if no Controller is being transitioned to
-         * @param from      The old Controller or `null` if there was no Controller before this transition
-         * @param isPush    True if this was a push operation, or false if it's a pop
-         * @param container The containing ViewGroup
-         * @param handler   The change handler that was used.
          */
         fun onChangeCompleted(
             to: Controller?,

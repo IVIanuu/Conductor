@@ -17,10 +17,8 @@ class FadeChangeHandler : AnimatorChangeHandler {
 
     constructor(removesFromViewOnPush: Boolean) : super(removesFromViewOnPush) {}
 
-    constructor(duration: Long) : super(duration) {}
-
     constructor(duration: Long, removesFromViewOnPush: Boolean) : super(
-        duration,
+        DEFAULT_ANIMATION_DURATION,
         removesFromViewOnPush
     ) {
     }
@@ -53,4 +51,7 @@ class FadeChangeHandler : AnimatorChangeHandler {
         return FadeChangeHandler(animationDuration, removesFromViewOnPush())
     }
 
+    private companion object {
+        private const val DEFAULT_ANIMATION_DURATION = 300L
+    }
 }
