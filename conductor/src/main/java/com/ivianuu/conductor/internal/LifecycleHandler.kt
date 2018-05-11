@@ -139,10 +139,7 @@ class LifecycleHandler : Fragment(), ActivityLifecycleCallbacks {
     private fun destroyRouters() {
         if (!destroyed) {
             destroyed = true
-
-            for (router in routerMap.values) {
-                router.onActivityDestroyed(lifecycleActivity)
-            }
+            routerMap.values.forEach { it.onActivityDestroyed(lifecycleActivity) }
         }
     }
 
@@ -151,9 +148,7 @@ class LifecycleHandler : Fragment(), ActivityLifecycleCallbacks {
 
         val instanceId = activityRequestMap.get(requestCode)
         if (instanceId != null) {
-            for (router in routerMap.values) {
-                router.onActivityResult(instanceId, requestCode, resultCode, data)
-            }
+            routerMap.values.forEach { it.onActivityResult(instanceId, requestCode, resultCode, data) }
         }
     }
 
@@ -166,51 +161,34 @@ class LifecycleHandler : Fragment(), ActivityLifecycleCallbacks {
 
         val instanceId = permissionRequestMap.get(requestCode)
         if (instanceId != null) {
-            for (router in routerMap.values) {
-                router.onRequestPermissionsResult(
-                    instanceId,
-                    requestCode,
-                    permissions,
-                    grantResults
-                )
-            }
+            routerMap.values
+                .forEach {
+                    it.onRequestPermissionsResult(instanceId, requestCode,
+                        permissions, grantResults)
+                }
         }
     }
 
     override fun shouldShowRequestPermissionRationale(permission: String): Boolean {
-        for (router in routerMap.values) {
-            val handled = router.handleRequestedPermission(permission)
-            if (handled) {
-                return true
-            }
-        }
-        return super.shouldShowRequestPermissionRationale(permission)
+        return routerMap.values
+            .filter { it.handleRequestedPermission(permission) }
+            .any() || super.shouldShowRequestPermissionRationale(permission)
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         super.onCreateOptionsMenu(menu, inflater)
-
-        for (router in routerMap.values) {
-            router.onCreateOptionsMenu(menu, inflater)
-        }
+        routerMap.values.forEach { it.onCreateOptionsMenu(menu, inflater) }
     }
 
     override fun onPrepareOptionsMenu(menu: Menu) {
         super.onPrepareOptionsMenu(menu)
-
-        for (router in routerMap.values) {
-            router.onPrepareOptionsMenu(menu)
-        }
+        routerMap.values.forEach { it.onPrepareOptionsMenu(menu) }
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        for (router in routerMap.values) {
-            if (router.onOptionsItemSelected(item)) {
-                return true
-            }
-        }
-
-        return super.onOptionsItemSelected(item)
+        return routerMap.values
+            .filter { it.onOptionsItemSelected(item) }
+            .any() || super.onOptionsItemSelected(item)
     }
 
     fun registerForActivityResult(instanceId: String, requestCode: Int) {
@@ -280,33 +258,25 @@ class LifecycleHandler : Fragment(), ActivityLifecycleCallbacks {
 
     override fun onActivityStarted(activity: Activity) {
         if (this.lifecycleActivity == activity) {
-            for (router in routerMap.values) {
-                router.onActivityStarted(activity)
-            }
+            routerMap.values.forEach { it.onActivityStarted(activity) }
         }
     }
 
     override fun onActivityResumed(activity: Activity) {
         if (this.lifecycleActivity == activity) {
-            for (router in routerMap.values) {
-                router.onActivityResumed(activity)
-            }
+            routerMap.values.forEach { it.onActivityResumed(activity) }
         }
     }
 
     override fun onActivityPaused(activity: Activity) {
         if (this.lifecycleActivity == activity) {
-            for (router in routerMap.values) {
-                router.onActivityPaused(activity)
-            }
+            routerMap.values.forEach { it.onActivityPaused(activity) }
         }
     }
 
     override fun onActivityStopped(activity: Activity) {
         if (this.lifecycleActivity == activity) {
-            for (router in routerMap.values) {
-                router.onActivityStopped(activity)
-            }
+            routerMap.values.forEach { it.onActivityStopped(activity) }
         }
     }
 
