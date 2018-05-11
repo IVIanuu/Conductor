@@ -45,9 +45,7 @@ internal class ControllerHostedRouter : Router {
     internal var isDetachFrozen = false
         set(value) {
             field = value
-            for (transaction in backstack) {
-                transaction.controller.isDetachFrozen = value
-            }
+            backstack.forEach { it.controller.isDetachFrozen = value }
         }
 
     constructor()
@@ -80,23 +78,19 @@ internal class ControllerHostedRouter : Router {
             removeChangeListener(container)
         }
 
-        val controllersToDestroy = destroyingControllers.toList()
+        destroyingControllers
+            .filter { it.view != null }
+            .map { it to it.requireView() }
+            .forEach { it.first.detach(it.second, true, false) }
 
-        for (controller in controllersToDestroy) {
-            val view = controller.view
-            if (view != null) {
-                controller.detach(view, true, false)
-            }
-        }
-
-        for (transaction in backstack) {
-            val view = transaction.controller.view
-            if (view != null) {
-                transaction.controller.detach(view, true, false)
-            }
-        }
+        backstack
+            .map { it.controller }
+            .filter { it.view != null }
+            .map { it to it.requireView() }
+            .forEach { it.first.detach(it.second, true, false) }
 
         prepareForContainerRemoval()
+
         hostController = null
         this.container = null
     }

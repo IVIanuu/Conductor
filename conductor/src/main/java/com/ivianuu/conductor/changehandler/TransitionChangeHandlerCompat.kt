@@ -50,7 +50,6 @@ open class TransitionChangeHandlerCompat : ControllerChangeHandler {
 
     override fun saveToBundle(bundle: Bundle) {
         super.saveToBundle(bundle)
-
         bundle.putString(KEY_CHANGE_HANDLER_CLASS, changeHandler.javaClass.name)
 
         val stateBundle = Bundle()

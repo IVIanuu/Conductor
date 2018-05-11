@@ -28,7 +28,7 @@ abstract class Router {
     internal val destroyingControllers = mutableListOf<Controller>()
 
     var popsLastView = false
-        set
+
     private var containerFullyAttached = false
 
     internal var container: ViewGroup? = null
@@ -179,9 +179,9 @@ abstract class Router {
             trackDestroyingController(backstack.pop())
         }
 
-        val handler = transaction.pushChangeHandler()
+        val handler = transaction.pushChangeHandler
         if (topTransaction != null) {
-            val pushChangeHandler = topTransaction.pushChangeHandler()
+            val pushChangeHandler = topTransaction.pushChangeHandler
             val oldHandlerRemovedViews =
                 pushChangeHandler == null || pushChangeHandler.removesFromViewOnPush
             val newHandlerRemovesViews = handler == null || handler.removesFromViewOnPush
@@ -225,7 +225,7 @@ abstract class Router {
                 }
             })
 
-            performControllerChange(null, topTransaction, false, topTransaction.popChangeHandler())
+            performControllerChange(null, topTransaction, false, topTransaction.popChangeHandler)
         }
     }
 
@@ -255,7 +255,7 @@ abstract class Router {
         ensureMainThread()
 
         for (transaction in backstack) {
-            if (tag == transaction.tag()) {
+            if (tag == transaction.tag) {
                 popToTransaction(transaction, changeHandler)
                 return true
             }
@@ -271,7 +271,7 @@ abstract class Router {
         ensureMainThread()
 
         val transactions = listOf(transaction)
-        setBackstack(transactions, transaction.pushChangeHandler())
+        setBackstack(transactions, transaction.pushChangeHandler)
     }
 
     /**
@@ -293,7 +293,7 @@ abstract class Router {
      */
     fun getControllerWithTag(tag: String): Controller? {
         return backstack
-            .firstOrNull { it.tag() == tag }
+            .firstOrNull { it.tag == tag }
             ?.controller
     }
 
@@ -388,7 +388,7 @@ abstract class Router {
                             transaction,
                             newVisibleTransactions[i - 1],
                             true,
-                            transaction.pushChangeHandler()
+                            transaction.pushChangeHandler
                         )
                     }
                 }
@@ -593,7 +593,7 @@ abstract class Router {
             }
 
             if (changeHandler == null) {
-                changeHandler = topTransaction?.popChangeHandler()
+                changeHandler = topTransaction?.popChangeHandler
             }
 
             setBackstack(updatedBackstack, changeHandler)
@@ -627,8 +627,8 @@ abstract class Router {
         }
 
         val changeHandler = when {
-            isPush && to != null -> to.pushChangeHandler()
-            from != null -> from.popChangeHandler()
+            isPush && to != null -> to.pushChangeHandler
+            from != null -> from.popChangeHandler
             else -> null
         }
 
@@ -755,10 +755,11 @@ abstract class Router {
     private fun ensureOrderedTransactionIndices(backstack: List<RouterTransaction>) {
         val indices = mutableListOf<Int>()
 
-        for (transaction in backstack) {
-            transaction.ensureValidIndex(transactionIndexer)
-            indices.add(transaction.transactionIndex)
-        }
+        backstack
+            .forEach {
+                it.ensureValidIndex(transactionIndexer)
+                indices.add(it.transactionIndex)
+            }
 
         indices.sort()
 
@@ -780,7 +781,7 @@ abstract class Router {
             val transaction = backstackIterator.next()
             transactions.add(transaction)
 
-            val pushChangeHandler = transaction.pushChangeHandler()
+            val pushChangeHandler = transaction.pushChangeHandler
             if (pushChangeHandler == null || pushChangeHandler.removesFromViewOnPush) {
                 break
             }
@@ -799,7 +800,7 @@ abstract class Router {
         }
 
         for (i in rhs.indices) {
-            if (rhs[i].controller() != lhs[i].controller()) {
+            if (rhs[i].controller != lhs[i].controller) {
                 return false
             }
         }

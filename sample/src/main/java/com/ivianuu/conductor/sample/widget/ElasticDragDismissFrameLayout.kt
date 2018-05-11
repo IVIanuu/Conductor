@@ -24,7 +24,6 @@ import android.util.AttributeSet
 import android.util.TypedValue
 import android.view.View
 import android.widget.FrameLayout
-import java.util.*
 
 /**
  * A [FrameLayout] which responds to nested scrolls to create drag-dismissable layouts.
@@ -49,7 +48,7 @@ class ElasticDragDismissFrameLayout @JvmOverloads constructor(
     private var draggingDown = false
     private var draggingUp = false
 
-    private var callbacks: MutableList<ElasticDragDismissCallback>? = null
+    private val callbacks = mutableListOf<ElasticDragDismissCallback>()
 
     abstract class ElasticDragDismissCallback {
 
@@ -146,15 +145,12 @@ class ElasticDragDismissFrameLayout @JvmOverloads constructor(
     }
 
     fun addListener(listener: ElasticDragDismissCallback) {
-        if (callbacks == null) {
-            callbacks = ArrayList()
-        }
-        callbacks!!.add(listener)
+        callbacks.add(listener)
     }
 
     fun removeListener(listener: ElasticDragDismissCallback) {
-        if (callbacks != null && callbacks!!.size > 0) {
-            callbacks!!.remove(listener)
+        if (callbacks.size > 0) {
+            callbacks.remove(listener)
         }
     }
 
@@ -219,22 +215,11 @@ class ElasticDragDismissFrameLayout @JvmOverloads constructor(
         elasticOffset: Float, elasticOffsetPixels: Float,
         rawOffset: Float, rawOffsetPixels: Float
     ) {
-        if (callbacks != null && !callbacks!!.isEmpty()) {
-            for (callback in callbacks!!) {
-                callback.onDrag(
-                    elasticOffset, elasticOffsetPixels,
-                    rawOffset, rawOffsetPixels
-                )
-            }
-        }
+        callbacks.forEach { it.onDrag(elasticOffset, elasticOffsetPixels, rawOffset, rawOffsetPixels) }
     }
 
     private fun dispatchDismissCallback() {
-        if (callbacks != null && !callbacks!!.isEmpty()) {
-            for (callback in callbacks!!) {
-                callback.onDragDismissed()
-            }
-        }
+        callbacks.forEach { it.onDragDismissed() }
     }
 
 }

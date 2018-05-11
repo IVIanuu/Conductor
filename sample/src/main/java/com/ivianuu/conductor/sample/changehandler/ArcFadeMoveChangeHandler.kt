@@ -9,7 +9,6 @@ import android.view.View
 import android.view.ViewGroup
 import com.ivianuu.conductor.changehandler.SharedElementTransitionChangeHandler
 import com.ivianuu.conductor.internal.TransitionUtils
-import kotlin.collections.ArrayList
 
 @TargetApi(Build.VERSION_CODES.LOLLIPOP)
 class ArcFadeMoveChangeHandler @JvmOverloads constructor(
@@ -48,12 +47,9 @@ class ArcFadeMoveChangeHandler @JvmOverloads constructor(
         transition.addListener(object : TransitionListener {
             override fun onTransitionStart(transition: Transition) {
                 if (from != null) {
-                    for (name in sharedElementNames) {
-                        val namedView = TransitionUtils.findNamedView(from, name)
-                        if (namedView != null) {
-                            namedView.visibility = View.INVISIBLE
-                        }
-                    }
+                    sharedElementNames
+                        .mapNotNull { TransitionUtils.findNamedView(from, it) }
+                        .forEach { it.visibility = View.INVISIBLE }
                 }
             }
 
@@ -82,9 +78,7 @@ class ArcFadeMoveChangeHandler @JvmOverloads constructor(
         to: View?,
         isPush: Boolean
     ) {
-        for (name in sharedElementNames) {
-            addSharedElement(name)
-        }
+        sharedElementNames.forEach { addSharedElement(it) }
     }
 
     override fun allowTransitionOverlap(isPush: Boolean) = false

@@ -89,11 +89,7 @@ abstract class SharedElementTransitionChangeHandler : TransitionChangeHandler() 
     ) {
         if (to != null && removedViews.size > 0) {
             to.visibility = View.VISIBLE
-
-            for (removedView in removedViews) {
-                removedView.parent.addView(removedView.view)
-            }
-
+            removedViews.forEach { it.parent.addView(it.view) }
             removedViews.clear()
         }
 

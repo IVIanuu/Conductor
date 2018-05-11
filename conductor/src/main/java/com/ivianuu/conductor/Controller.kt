@@ -741,15 +741,15 @@ abstract class Controller @JvmOverloads protected constructor(args: Bundle? = nu
     }
 
     private fun restoreChildControllerHosts() {
-        for (childRouter in childRouters) {
-            if (!childRouter.hasHost) {
+        childRouters
+            .filter { !it.hasHost }
+            .forEach { childRouter ->
                 val containerView = view?.findViewById<View>(childRouter.hostId)
                 if (containerView != null && containerView is ViewGroup) {
                     childRouter.setHost(this, containerView)
                     childRouter.rebindIfNeeded()
                 }
             }
-        }
     }
 
     private fun performDestroy() {
