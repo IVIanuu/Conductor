@@ -15,7 +15,7 @@ class ActivityHostedRouter : Router() {
     override val activity: FragmentActivity?
         get() = lifecycleHandler?.lifecycleActivity
 
-    override val hasHost = true
+    override val hasHost get() = lifecycleHandler != null
 
     override val siblingRouters: List<Router>
         get() = lifecycleHandler?.routers ?: emptyList()
