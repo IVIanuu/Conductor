@@ -1,5 +1,6 @@
 package com.ivianuu.conductor
 
+import android.app.Activity
 import android.content.Intent
 import android.content.IntentSender
 import android.os.Bundle
@@ -59,6 +60,11 @@ class ActivityHostedRouter : Router() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         lifecycleHandler?.onActivityResult(requestCode, resultCode, data)
+    }
+
+    override fun onActivityDestroyed(activity: Activity) {
+        super.onActivityDestroyed(activity)
+        lifecycleHandler = null
     }
 
     override fun startActivity(intent: Intent) {
