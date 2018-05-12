@@ -63,23 +63,12 @@ abstract class Controller @JvmOverloads protected constructor(args: Bundle? = nu
             if (field != value) {
                 field = value
 
-                if (value == null) return
+                if (value != null) {
+                    performOnRestoreInstanceState()
 
-                val context = value.activity
-
-                if (context != null && !isCreated) {
-                    notifyLifecycleListeners { it.preCreate(this) }
-
-                    isCreated = true
-                    onCreate()
-
-                    notifyLifecycleListeners { it.postCreate(this) }
+                    onRouterSetListeners.forEach { it.invoke(value) }
+                    onRouterSetListeners.clear()
                 }
-
-                performOnRestoreInstanceState()
-
-                onRouterSetListeners.forEach { it.invoke(value) }
-                onRouterSetListeners.clear()
             } else {
                 performOnRestoreInstanceState()
             }
@@ -151,7 +140,7 @@ abstract class Controller @JvmOverloads protected constructor(args: Bundle? = nu
     private val onRouterSetListeners = mutableListOf<((Router) -> Unit)>()
     private var destroyedView: WeakReference<View>? = null
     private var isPerformingExitTransition = false
-    private var isCreated = false
+    private var isContextAvailable = false
 
     /**
      * Returns the host Activity of this Controller's [Router] or `null` if this
@@ -309,9 +298,17 @@ abstract class Controller @JvmOverloads protected constructor(args: Bundle? = nu
     }
 
     /**
-     * Called when this Controller is attach to its router
+     * Called when this Controller has a Context available to it. This will happen very early on in the lifecycle
+     * (before a view is created). If the host activity is re-created (ex: for orientation change), this will be
+     * called again when the new context is available.
      */
-    protected open fun onCreate() {}
+    protected open fun onContextAvailable(context: Context) {}
+
+    /**
+     * Called when this Controller's Context is no longer available. This can happen when the Controller is
+     * destroyed or when the host Activity is destroyed.
+     */
+    protected open fun onContextUnavailable() {}
 
     /**
      * Called when this Controller is attached to its host ViewGroup
@@ -572,6 +569,23 @@ abstract class Controller @JvmOverloads protected constructor(args: Bundle? = nu
         onRequestPermissionsResult(requestCode, permissions, grantResults)
     }
 
+    internal fun onContextAvailable() {
+        val context = router?.activity
+
+        if (context != null && !isContextAvailable) {
+            notifyLifecycleListeners { it.preContextAvailable(this) }
+
+            isContextAvailable = true
+            onContextAvailable(context)
+
+            notifyLifecycleListeners { it.postContextAvailable(this) }
+        }
+
+        for (childRouter in childRouters) {
+            childRouter.onContextAvailable()
+        }
+    }
+
     private fun executeWithRouter(action: (Router) -> Unit) {
         val router = router
         if (router != null) {
@@ -608,7 +622,20 @@ abstract class Controller @JvmOverloads protected constructor(args: Bundle? = nu
     }
 
     internal fun activityDestroyed(activity: Activity) {
-        destroy(true)
+        if (activity.isChangingConfigurations) {
+            view?.let { detach(it, true, false) }
+        } else {
+            destroy(true)
+        }
+
+        if (isContextAvailable) {
+            notifyLifecycleListeners { it.preContextUnavailable(this, activity) }
+
+            isContextAvailable = false
+            onContextUnavailable()
+
+            notifyLifecycleListeners { it.postContextAvailable(this) }
+        }
     }
 
     internal fun attach(view: View) {
@@ -753,6 +780,15 @@ abstract class Controller @JvmOverloads protected constructor(args: Bundle? = nu
     }
 
     private fun performDestroy() {
+        if (isContextAvailable) {
+            notifyLifecycleListeners { it.preContextUnavailable(this, requireActivity()) }
+
+            isContextAvailable = false
+            onContextUnavailable()
+
+            notifyLifecycleListeners { it.postContextUnavailable(this) }
+        }
+
         if (!isDestroyed) {
             notifyLifecycleListeners { it.preDestroy(this) }
 
@@ -973,8 +1009,8 @@ abstract class Controller @JvmOverloads protected constructor(args: Bundle? = nu
     /** Allows external classes to listen for lifecycle events in a Controller  */
     abstract class LifecycleListener {
 
-        open fun preCreate(controller: Controller) {}
-        open fun postCreate(controller: Controller) {}
+        open fun preContextAvailable(controller: Controller) {}
+        open fun postContextAvailable(controller: Controller) {}
 
         open fun preCreateView(controller: Controller) {}
         open fun postCreateView(controller: Controller, view: View) {}
@@ -987,6 +1023,9 @@ abstract class Controller @JvmOverloads protected constructor(args: Bundle? = nu
 
         open fun preDestroyView(controller: Controller, view: View) {}
         open fun postDestroyView(controller: Controller) {}
+
+        open fun preContextUnavailable(controller: Controller, context: Context) {}
+        open fun postContextUnavailable(controller: Controller) {}
 
         open fun preDestroy(controller: Controller) {}
         open fun postDestroy(controller: Controller) {}

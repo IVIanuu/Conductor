@@ -609,6 +609,10 @@ abstract class Router {
         container?.setOnHierarchyChangeListener(null)
     }
 
+    internal fun onContextAvailable() {
+        backstack.forEach { it.controller.onContextAvailable() }
+    }
+
     fun handleRequestedPermission(permission: String): Boolean {
         return backstack
             .map { it.controller }
@@ -810,6 +814,7 @@ abstract class Router {
 
     internal open fun setControllerRouter(controller: Controller) {
         controller.router = this
+        controller.onContextAvailable()
     }
 
     internal abstract fun invalidateOptionsMenu()

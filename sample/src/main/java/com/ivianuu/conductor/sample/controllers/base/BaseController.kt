@@ -1,5 +1,6 @@
 package com.ivianuu.conductor.sample.controllers.base
 
+import android.content.Context
 import android.os.Bundle
 import android.support.v7.app.ActionBar
 import android.view.LayoutInflater
@@ -33,9 +34,13 @@ abstract class BaseController : Controller, LayoutContainer {
 
     protected constructor(args: Bundle) : super(args) {}
 
-    override fun onCreate() {
-        super.onCreate()
+    init {
         d { "on create" }
+    }
+
+    override fun onContextAvailable(context: Context) {
+        super.onContextAvailable(context)
+        d { "on context available" }
     }
 
     override fun onCreateView(
@@ -106,6 +111,11 @@ abstract class BaseController : Controller, LayoutContainer {
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
         super.onRestoreInstanceState(savedInstanceState)
         d { "on restore instance state" }
+    }
+
+    override fun onContextUnavailable() {
+        super.onContextUnavailable()
+        d { "on context unavailable" }
     }
 
     protected open fun onViewCreated(view: View) { }

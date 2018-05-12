@@ -9,31 +9,38 @@ import com.ivianuu.conductor.ControllerChangeHandler.ControllerChangeListener
 import com.ivianuu.conductor.internal.LifecycleHandler
 import com.ivianuu.conductor.internal.TransactionIndexer
 
-class ActivityHostedRouter(
-    private val lifecycleHandler: LifecycleHandler,
-    container: ViewGroup
-) : Router() {
+class ActivityHostedRouter : Router() {
 
-    override val activity: FragmentActivity
-        get() = lifecycleHandler.lifecycleActivity
+    override val activity: FragmentActivity?
+        get() = lifecycleHandler?.lifecycleActivity
 
     override val hasHost = true
 
     override val siblingRouters: List<Router>
-        get() = lifecycleHandler.routers
+        get() = lifecycleHandler?.routers ?: emptyList()
 
     override val rootRouter: Router
         get() = this
 
     override val transactionIndexer = TransactionIndexer()
 
-    init {
-        if (container is ControllerChangeListener) {
-            addChangeListener(container)
-        }
-        this.container = container
+    private var lifecycleHandler: LifecycleHandler? = null
 
-        watchContainerAttach()
+    fun setHost(lifecycleHandler: LifecycleHandler, container: ViewGroup) {
+        if (this.lifecycleHandler != lifecycleHandler || this.container != container) {
+            if (this.container != null && this.container is ControllerChangeListener) {
+                removeChangeListener(this.container as ControllerChangeListener)
+            }
+
+            if (container is ControllerChangeListener) {
+                addChangeListener(container as ControllerChangeListener)
+            }
+
+            this.lifecycleHandler = lifecycleHandler
+            this.container = container
+
+            watchContainerAttach()
+        }
     }
 
     override fun saveInstanceState(outState: Bundle) {
@@ -47,15 +54,15 @@ class ActivityHostedRouter(
     }
 
     public override fun invalidateOptionsMenu() {
-        lifecycleHandler.lifecycleActivity.invalidateOptionsMenu()
+        lifecycleHandler?.lifecycleActivity?.invalidateOptionsMenu()
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        lifecycleHandler.onActivityResult(requestCode, resultCode, data)
+        lifecycleHandler?.onActivityResult(requestCode, resultCode, data)
     }
 
     override fun startActivity(intent: Intent) {
-        lifecycleHandler.startActivity(intent)
+        lifecycleHandler?.startActivity(intent)
     }
 
     override fun startActivityForResult(
@@ -63,7 +70,7 @@ class ActivityHostedRouter(
         intent: Intent,
         requestCode: Int
     ) {
-        lifecycleHandler.startActivityForResult(instanceId, intent, requestCode)
+        lifecycleHandler?.startActivityForResult(instanceId, intent, requestCode)
     }
 
     override fun startActivityForResult(
@@ -72,14 +79,14 @@ class ActivityHostedRouter(
         requestCode: Int,
         options: Bundle?
     ) {
-        lifecycleHandler.startActivityForResult(instanceId, intent, requestCode, options)
+        lifecycleHandler?.startActivityForResult(instanceId, intent, requestCode, options)
     }
 
     override fun startIntentSenderForResult(
         instanceId: String, intent: IntentSender, requestCode: Int, fillInIntent: Intent?,
         flagsMask: Int, flagsValues: Int, extraFlags: Int, options: Bundle?
     ) {
-        lifecycleHandler.startIntentSenderForResult(
+        lifecycleHandler?.startIntentSenderForResult(
             instanceId,
             intent,
             requestCode,
@@ -92,11 +99,11 @@ class ActivityHostedRouter(
     }
 
     override fun registerForActivityResult(instanceId: String, requestCode: Int) {
-        lifecycleHandler.registerForActivityResult(instanceId, requestCode)
+        lifecycleHandler?.registerForActivityResult(instanceId, requestCode)
     }
 
     override fun unregisterForActivityResults(instanceId: String) {
-        lifecycleHandler.unregisterForActivityResults(instanceId)
+        lifecycleHandler?.unregisterForActivityResults(instanceId)
     }
 
     override fun requestPermissions(
@@ -104,7 +111,7 @@ class ActivityHostedRouter(
         permissions: Array<String>,
         requestCode: Int
     ) {
-        lifecycleHandler.requestPermissions(instanceId, permissions, requestCode)
+        lifecycleHandler?.requestPermissions(instanceId, permissions, requestCode)
     }
 
 }

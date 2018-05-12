@@ -23,7 +23,7 @@ import kotlinx.android.parcel.Parcelize
 
 class LifecycleHandler : Fragment(), ActivityLifecycleCallbacks {
 
-    lateinit var lifecycleActivity: FragmentActivity
+    var lifecycleActivity: FragmentActivity? = null
 
     private var hasRegisteredCallbacks = false
     private var destroyed = false
@@ -39,11 +39,13 @@ class LifecycleHandler : Fragment(), ActivityLifecycleCallbacks {
 
     init {
         setHasOptionsMenu(true)
+        retainInstance = true
     }
 
     fun getRouter(container: ViewGroup, savedInstanceState: Bundle?): Router {
-        return routerMap.getOrPut(container.id) {
-            ActivityHostedRouter(this, container).apply {
+        val router = routerMap.getOrPut(container.id) {
+            ActivityHostedRouter().apply {
+                setHost(this@LifecycleHandler, container)
                 if (savedInstanceState != null) {
                     val routerSavedState =
                         savedInstanceState.getBundle(KEY_ROUTER_STATE_PREFIX + containerId)
@@ -53,6 +55,10 @@ class LifecycleHandler : Fragment(), ActivityLifecycleCallbacks {
                 }
             }
         }
+
+        router.setHost(this, container)
+
+        return router
     }
 
     private fun registerActivityListener(activity: FragmentActivity) {
@@ -107,9 +113,12 @@ class LifecycleHandler : Fragment(), ActivityLifecycleCallbacks {
 
     override fun onDestroy() {
         super.onDestroy()
-        lifecycleActivity.application.unregisterActivityLifecycleCallbacks(this)
-        activeLifecycleHandlers.remove(lifecycleActivity)
+        lifecycleActivity?.let {
+            it.application.unregisterActivityLifecycleCallbacks(this)
+            activeLifecycleHandlers.remove(it)
+        }
         destroyRouters()
+        lifecycleActivity = null
     }
 
     override fun onAttach(context: Context) {
@@ -139,7 +148,7 @@ class LifecycleHandler : Fragment(), ActivityLifecycleCallbacks {
     private fun destroyRouters() {
         if (!destroyed) {
             destroyed = true
-            routerMap.values.forEach { it.onActivityDestroyed(lifecycleActivity) }
+            routerMap.values.forEach { it.onActivityDestroyed(requireActivity()) }
         }
     }
 
@@ -254,6 +263,13 @@ class LifecycleHandler : Fragment(), ActivityLifecycleCallbacks {
     }
 
     override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {
+        if (this.lifecycleActivity == null && findInActivity(lifecycleActivity!!) == this@LifecycleHandler) {
+            this.lifecycleActivity = activity as FragmentActivity
+
+            for (router in routerMap.values) {
+                router.onContextAvailable()
+            }
+        }
     }
 
     override fun onActivityStarted(activity: Activity) {
