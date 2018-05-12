@@ -9,6 +9,7 @@ object Versions {
     const val versionName = "1.0"
 
     const val androidGradlePlugin = "3.1.2"
+    const val autoDispose = "9d57926deb"
     const val kotlin = "1.2.41"
     const val ktx = "0.3"
     const val mavenGradle = "2.1"
@@ -17,6 +18,8 @@ object Versions {
 //
 object Deps {
     const val androidGradlePlugin = "com.android.tools.build:gradle:${Versions.androidGradlePlugin}"
+
+    const val autoDispose = "com.github.IVIanuu.AutoDispose:autodispose:${Versions.autoDispose}"
 
     const val ktx = "androidx.core:core-ktx:${Versions.ktx}"
     const val kotlinGradlePlugin = "org.jetbrains.kotlin:kotlin-gradle-plugin:${Versions.kotlin}"

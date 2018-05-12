@@ -10,6 +10,7 @@
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/buildSrc" />
             <option value="$PROJECT_DIR$/conductor" />
+            <option value="$PROJECT_DIR$/conductor-autodispose" />
             <option value="$PROJECT_DIR$/sample" />
           </set>
         </option>
