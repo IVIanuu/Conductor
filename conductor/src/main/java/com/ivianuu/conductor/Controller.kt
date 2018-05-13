@@ -857,13 +857,14 @@ abstract class Controller @JvmOverloads protected constructor(args: Bundle? = nu
         overriddenPushHandler?.let { outState.putBundle(KEY_OVERRIDDEN_PUSH_HANDLER, it.toBundle()) }
         overriddenPopHandler?.let { outState.putBundle(KEY_OVERRIDDEN_POP_HANDLER, it.toBundle()) }
 
-        outState.putParcelableArrayList(KEY_CHILD_ROUTERS, ArrayList(
-            childRouters.map {
+        val childRouterBundles = childRouters
+            .map {
                 val bundle = Bundle()
                 it.saveInstanceState(bundle)
                 bundle
             }
-        ))
+
+        outState.putParcelableArrayList(KEY_CHILD_ROUTERS, ArrayList(childRouterBundles))
 
         val savedState = Bundle(javaClass.classLoader)
         onSaveInstanceState(savedState)

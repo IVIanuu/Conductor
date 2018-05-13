@@ -208,7 +208,6 @@ abstract class AnimatorChangeHandler @JvmOverloads constructor(
 
         override fun onPreDraw(): Boolean {
             onReadyOrAborted()
-
             return true
         }
 
