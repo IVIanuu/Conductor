@@ -1,5 +1,7 @@
 package com.ivianuu.conductor.sample.controllers.base
 
+import android.arch.lifecycle.ViewModelStore
+import android.arch.lifecycle.ViewModelStoreOwner
 import android.content.Context
 import android.os.Bundle
 import android.support.v7.app.ActionBar
@@ -13,7 +15,7 @@ import com.ivianuu.conductor.sample.d
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.*
 
-abstract class BaseController : Controller, LayoutContainer {
+abstract class BaseController : Controller, LayoutContainer, ViewModelStoreOwner {
 
     override var containerView: View? = null
 
@@ -30,11 +32,18 @@ abstract class BaseController : Controller, LayoutContainer {
 
     protected abstract val layoutRes: Int
 
+    private val vmStore = ViewModelStore()
+
     protected constructor() {}
 
     protected constructor(args: Bundle) : super(args) {}
 
     init {
+        d { "init" }
+    }
+
+    override fun onCreate() {
+        super.onCreate()
         d { "on create" }
     }
 
@@ -67,6 +76,7 @@ abstract class BaseController : Controller, LayoutContainer {
     }
 
     override fun onDestroy() {
+        vmStore.clear()
         super.onDestroy()
         d { "on destroy" }
     }
@@ -117,6 +127,8 @@ abstract class BaseController : Controller, LayoutContainer {
         super.onContextUnavailable()
         d { "on context unavailable" }
     }
+
+    override fun getViewModelStore() = vmStore
 
     protected open fun onViewCreated(view: View) { }
 }

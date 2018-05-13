@@ -53,8 +53,24 @@ abstract class Controller @JvmOverloads protected constructor(args: Bundle? = nu
     var isAttached = false
         private set
 
-    private var hasOptionsMenu = false
-    private var optionsMenuHidden = false
+    var hasOptionsMenu = false
+        set(value) {
+            val invalidate = isAttached && !optionsMenuHidden && field != value
+
+            field = value
+
+            if (invalidate) executeWithRouter { it.invalidateOptionsMenu() }
+        }
+
+    var optionsMenuHidden = false
+        set(value) {
+            val invalidate = isAttached && hasOptionsMenu && field != value
+
+            field = value
+
+            if (invalidate) executeWithRouter { it.invalidateOptionsMenu() }
+        }
+
     internal var viewIsAttached = false
     internal var viewWasDetached = false
 
@@ -500,35 +516,6 @@ abstract class Controller @JvmOverloads protected constructor(args: Bundle? = nu
     private fun notifyLifecycleListeners(action: (LifecycleListener) -> Unit) {
         val lifecycleListeners = lifecycleListeners.toList()
         lifecycleListeners.forEach(action)
-    }
-
-    /**
-     * Registers/unregisters for participation in populating the options menu by receiving options-related
-     * callbacks, such as [.onCreateOptionsMenu]
-     */
-    fun setHasOptionsMenu(hasOptionsMenu: Boolean) {
-        val invalidate = isAttached && !optionsMenuHidden && this.hasOptionsMenu != hasOptionsMenu
-
-        this.hasOptionsMenu = hasOptionsMenu
-
-        if (invalidate) {
-            requireRouter().invalidateOptionsMenu()
-        }
-    }
-
-    /**
-     * Sets whether or not this controller's menu items should be visible. This is useful for hiding the
-     * controller's options menu items when its UI is hidden, and not just when it is detached from the
-     * window (the default).
-     */
-    fun setOptionsMenuHidden(optionsMenuHidden: Boolean) {
-        val invalidate = isAttached && hasOptionsMenu && this.optionsMenuHidden != optionsMenuHidden
-
-        this.optionsMenuHidden = optionsMenuHidden
-
-        if (invalidate) {
-            requireRouter().invalidateOptionsMenu()
-        }
     }
 
     /**
