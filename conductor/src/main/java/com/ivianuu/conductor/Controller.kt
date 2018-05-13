@@ -621,7 +621,7 @@ abstract class Controller @JvmOverloads protected constructor(args: Bundle? = nu
             isContextAvailable = false
             onContextUnavailable()
 
-            notifyLifecycleListeners { it.postContextAvailable(this) }
+            notifyLifecycleListeners { it.postContextUnavailable(this) }
         }
     }
 
