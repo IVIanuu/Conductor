@@ -42,11 +42,6 @@ abstract class BaseController : Controller, LayoutContainer, ViewModelStoreOwner
         d { "init" }
     }
 
-    override fun onCreate() {
-        super.onCreate()
-        d { "on create" }
-    }
-
     override fun onContextAvailable(context: Context) {
         super.onContextAvailable(context)
         d { "on context available" }
