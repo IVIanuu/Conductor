@@ -15,6 +15,7 @@ import com.ivianuu.conductor.changehandler.FadeChangeHandler
 import com.ivianuu.conductor.changehandler.TransitionChangeHandlerCompat
 import com.ivianuu.conductor.sample.R
 import com.ivianuu.conductor.sample.changehandler.CityGridSharedElementTransitionChangeHandler
+import com.ivianuu.conductor.sample.changehandler.PostponeableChangeHandler
 import com.ivianuu.conductor.sample.controllers.base.BaseController
 
 import com.ivianuu.conductor.sample.util.KtViewHolder
@@ -73,15 +74,19 @@ class CityGridController(args: Bundle) : BaseController(args) {
         requireRouter().pushController(
             RouterTransaction.with(CityDetailController(model.drawableRes, model.title))
                 .pushChangeHandler(
-                    TransitionChangeHandlerCompat(
-                        CityGridSharedElementTransitionChangeHandler(names),
-                        FadeChangeHandler()
+                    PostponeableChangeHandler(
+                        TransitionChangeHandlerCompat(
+                            CityGridSharedElementTransitionChangeHandler(names),
+                            FadeChangeHandler()
+                        )
                     )
                 )
                 .popChangeHandler(
-                    TransitionChangeHandlerCompat(
-                        CityGridSharedElementTransitionChangeHandler(names),
-                        FadeChangeHandler()
+                    PostponeableChangeHandler(
+                        TransitionChangeHandlerCompat(
+                            CityGridSharedElementTransitionChangeHandler(names),
+                            FadeChangeHandler()
+                        )
                     )
                 )
         )

@@ -1,5 +1,6 @@
 package com.ivianuu.conductor.sample.controllers
 
+import android.content.Context
 import android.os.Bundle
 import android.support.v4.view.ViewCompat
 import android.support.v7.widget.LinearLayoutManager
@@ -8,9 +9,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.os.bundleOf
+import com.ivianuu.conductor.RouterTransaction
 import com.ivianuu.conductor.sample.R
+import com.ivianuu.conductor.sample.changehandler.PostponeableChangeHandler
 import com.ivianuu.conductor.sample.controllers.base.BaseController
-
 import com.ivianuu.conductor.sample.util.KtViewHolder
 import kotlinx.android.synthetic.main.controller_city_detail.*
 import kotlinx.android.synthetic.main.row_city_header.*
@@ -23,12 +25,22 @@ class CityDetailController(args: Bundle) : BaseController(args) {
     private val imageDrawableRes = args.getInt(KEY_IMAGE)
     override val title = args.getString(KEY_TITLE)
 
+    private lateinit var transaction: RouterTransaction
+
     constructor(imageDrawableRes: Int, title: String) : this(
         bundleOf(
             KEY_IMAGE to imageDrawableRes,
             KEY_TITLE to title
         )
     )
+
+    override fun onContextAvailable(context: Context) {
+        super.onContextAvailable(context)
+        transaction = requireRouter().getBackstack()
+            .first { it.controller == this }
+        (transaction.pushChangeHandler as PostponeableChangeHandler)
+            .postponeChange()
+    }
 
     override fun onViewCreated(view: View) {
         with(recycler_view) {
@@ -42,6 +54,12 @@ class CityDetailController(args: Bundle) : BaseController(args) {
                 title
             )
         }
+
+        (transaction.pushChangeHandler as PostponeableChangeHandler).startPostponedChange()
+
+        /*Handler().postDelayed({
+            (transaction.pushChangeHandler as PostponeableChangeHandler).startPostponedChange()
+        }, 0)*/
     }
 
     internal class CityDetailAdapter(

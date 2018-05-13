@@ -91,10 +91,9 @@ abstract class ControllerChangeHandler {
         } catch (e: Exception) {
             throw RuntimeException(javaClass.toString() + " does not have a default constructor.")
         }
-
     }
 
-    internal class ChangeTransaction(
+    internal data class ChangeTransaction(
         val to: Controller?,
         val from: Controller?,
         val isPush: Boolean,
@@ -174,6 +173,17 @@ abstract class ControllerChangeHandler {
             return false
         }
 
+        internal fun executeChange(transaction: ChangeTransaction) {
+            executeChange(
+                transaction.to,
+                transaction.from,
+                transaction.isPush,
+                transaction.container,
+                transaction.changeHandler,
+                transaction.listeners
+            )
+        }
+
         private fun abortOrComplete(
             toAbort: Controller,
             newController: Controller?,
@@ -189,17 +199,6 @@ abstract class ControllerChangeHandler {
 
                 inProgressChangeHandlers.remove(toAbort.instanceId)
             }
-        }
-
-        internal fun executeChange(transaction: ChangeTransaction) {
-            executeChange(
-                transaction.to,
-                transaction.from,
-                transaction.isPush,
-                transaction.container,
-                transaction.changeHandler,
-                transaction.listeners
-            )
         }
 
         private fun executeChange(
