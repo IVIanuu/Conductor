@@ -2,7 +2,7 @@ package com.ivianuu.conductor.internal
 
 import android.text.TextUtils
 
-object ClassUtils {
+internal object ClassUtils {
 
     fun <T> classForName(className: String, allowEmptyName: Boolean): Class<out T>? {
         if (allowEmptyName && TextUtils.isEmpty(className)) {
