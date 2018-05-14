@@ -198,8 +198,8 @@ internal class ControllerHostedRouter : Router {
     }
 
     override fun setControllerRouter(controller: Controller) {
-        super.setControllerRouter(controller)
         controller.parentController = hostController
+        super.setControllerRouter(controller)
     }
 
     companion object {

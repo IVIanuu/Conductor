@@ -6,7 +6,6 @@ import android.view.View
 import androidx.core.os.bundleOf
 import com.ivianuu.conductor.sample.R
 import com.ivianuu.conductor.sample.controllers.base.BaseController
-
 import kotlinx.android.synthetic.main.controller_child.*
 
 class ChildController(args: Bundle) : BaseController(args) {

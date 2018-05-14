@@ -16,7 +16,6 @@ import com.ivianuu.conductor.changehandler.TransitionChangeHandlerCompat
 import com.ivianuu.conductor.sample.R
 import com.ivianuu.conductor.sample.changehandler.CityGridSharedElementTransitionChangeHandler
 import com.ivianuu.conductor.sample.controllers.base.BaseController
-
 import com.ivianuu.conductor.sample.util.KtViewHolder
 import kotlinx.android.synthetic.main.controller_city_grid.*
 import kotlinx.android.synthetic.main.row_city_grid.view.*

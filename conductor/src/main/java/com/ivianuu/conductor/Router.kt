@@ -13,7 +13,6 @@ import com.ivianuu.conductor.changehandler.SimpleSwapChangeHandler
 import com.ivianuu.conductor.internal.NoOpControllerChangeHandler
 import com.ivianuu.conductor.internal.TransactionIndexer
 import com.ivianuu.conductor.internal.ensureMainThread
-import java.util.*
 
 /**
  * A Router implements navigation and backstack handling for [Controller]s. Router objects are attached
@@ -684,7 +683,7 @@ abstract class Router {
             isPush,
             container,
             changeHandler,
-            ArrayList(changeListeners)
+            changeListeners.toList()
         )
 
         if (pendingControllerChanges.size > 0) {
@@ -832,7 +831,6 @@ abstract class Router {
         options: Bundle?
     )
 
-    @Throws(IntentSender.SendIntentException::class)
     internal abstract fun startIntentSenderForResult(
         instanceId: String,
         intent: IntentSender,

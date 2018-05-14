@@ -16,7 +16,6 @@ import com.ivianuu.conductor.sample.changehandler.ArcFadeMoveChangeHandlerCompat
 import com.ivianuu.conductor.sample.changehandler.CircularRevealChangeHandlerCompat
 import com.ivianuu.conductor.sample.changehandler.FlipChangeHandler
 import com.ivianuu.conductor.sample.controllers.base.BaseController
-
 import kotlinx.android.synthetic.main.controller_transition_demo.*
 
 class TransitionDemoController(args: Bundle) : BaseController(args) {

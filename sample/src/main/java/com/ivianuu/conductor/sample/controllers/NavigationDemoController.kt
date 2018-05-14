@@ -9,7 +9,6 @@ import com.ivianuu.conductor.RouterTransaction
 import com.ivianuu.conductor.changehandler.HorizontalChangeHandler
 import com.ivianuu.conductor.sample.R
 import com.ivianuu.conductor.sample.controllers.base.BaseController
-
 import com.ivianuu.conductor.sample.util.ColorUtil
 import kotlinx.android.synthetic.main.controller_navigation_demo.*
 

@@ -2,16 +2,14 @@ package com.ivianuu.conductor.sample.controllers.base
 
 import android.arch.lifecycle.ViewModelStore
 import android.arch.lifecycle.ViewModelStoreOwner
-import android.content.Context
 import android.os.Bundle
 import android.support.v7.app.ActionBar
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-
 import com.ivianuu.conductor.Controller
 import com.ivianuu.conductor.sample.MainActivity
-import com.ivianuu.conductor.sample.d
+import com.ivianuu.conductor.sample.util.LoggingLifecycleListener
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.*
 
@@ -39,12 +37,7 @@ abstract class BaseController : Controller, LayoutContainer, ViewModelStoreOwner
     protected constructor(args: Bundle) : super(args) {}
 
     init {
-        d { "init" }
-    }
-
-    override fun onContextAvailable(context: Context) {
-        super.onContextAvailable(context)
-        d { "on context available" }
+        addLifecycleListener(LoggingLifecycleListener())
     }
 
     override fun onCreateView(
@@ -52,7 +45,6 @@ abstract class BaseController : Controller, LayoutContainer, ViewModelStoreOwner
         container: ViewGroup,
         savedViewState: Bundle?
     ): View {
-        d { "on create view" }
         val view = inflater.inflate(layoutRes, container, false)
         containerView = view
         onViewCreated(view)
@@ -62,18 +54,17 @@ abstract class BaseController : Controller, LayoutContainer, ViewModelStoreOwner
     override fun onAttach(view: View) {
         setTitle()
         super.onAttach(view)
-        d { "on attach" }
     }
 
-    override fun onDetach(view: View) {
-        d { "on detach" }
-        super.onDetach(view)
+    override fun onDestroyView(view: View) {
+        clearFindViewByIdCache()
+        containerView = null
+        super.onDestroyView(view)
     }
 
     override fun onDestroy() {
         vmStore.clear()
         super.onDestroy()
-        d { "on destroy" }
     }
 
     protected fun setTitle() {
@@ -90,37 +81,6 @@ abstract class BaseController : Controller, LayoutContainer, ViewModelStoreOwner
         if (title != null && actionBar != null) {
             actionBar.title = title
         }
-    }
-    override fun onDestroyView(view: View) {
-        d { "on destroy view" }
-        clearFindViewByIdCache()
-        containerView = null
-        super.onDestroyView(view)
-    }
-
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        d { "on save instance state" }
-    }
-
-    override fun onRestoreViewState(view: View, savedViewState: Bundle) {
-        super.onRestoreViewState(view, savedViewState)
-        d { "on restore view state" }
-    }
-
-    override fun onSaveViewState(view: View, outState: Bundle) {
-        super.onSaveViewState(view, outState)
-        d { "on save view state" }
-    }
-
-    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
-        super.onRestoreInstanceState(savedInstanceState)
-        d { "on restore instance state" }
-    }
-
-    override fun onContextUnavailable() {
-        super.onContextUnavailable()
-        d { "on context unavailable" }
     }
 
     override fun getViewModelStore() = vmStore

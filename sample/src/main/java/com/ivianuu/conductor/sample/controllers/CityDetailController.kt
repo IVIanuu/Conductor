@@ -12,7 +12,8 @@ import com.ivianuu.conductor.sample.R
 import com.ivianuu.conductor.sample.controllers.base.BaseController
 import com.ivianuu.conductor.sample.util.KtViewHolder
 import kotlinx.android.synthetic.main.controller_city_detail.*
-import kotlinx.android.synthetic.main.row_city_header.*
+import kotlinx.android.synthetic.main.controller_target_display.*
+import kotlinx.android.synthetic.main.row_city_detail.*
 
 class CityDetailController(args: Bundle) : BaseController(args) {
 
