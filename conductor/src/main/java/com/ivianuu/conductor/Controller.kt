@@ -568,9 +568,7 @@ abstract class Controller @JvmOverloads protected constructor(args: Bundle? = nu
             notifyLifecycleListeners { it.postContextAvailable(this) }
         }
 
-        for (childRouter in childRouters) {
-            childRouter.onContextAvailable()
-        }
+        childRouters.forEach { it.onContextAvailable() }
     }
 
     private fun executeWithRouter(action: (Router) -> Unit) {

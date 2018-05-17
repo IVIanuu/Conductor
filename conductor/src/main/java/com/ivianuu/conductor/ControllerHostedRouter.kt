@@ -73,9 +73,10 @@ internal class ControllerHostedRouter : Router {
     }
 
     fun removeHost() {
-        val container = container
-        if (container != null && container is ControllerChangeListener) {
-            removeChangeListener(container)
+        container?.let {
+            if (it is ControllerChangeListener) {
+                removeChangeListener(it)
+            }
         }
 
         destroyingControllers
@@ -92,7 +93,7 @@ internal class ControllerHostedRouter : Router {
         prepareForContainerRemoval()
 
         hostController = null
-        this.container = null
+        container = null
     }
 
     override fun destroy(popViews: Boolean) {

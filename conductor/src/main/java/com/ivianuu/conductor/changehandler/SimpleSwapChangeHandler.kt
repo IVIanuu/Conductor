@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.View
 import android.view.View.OnAttachStateChangeListener
 import android.view.ViewGroup
-
 import com.ivianuu.conductor.Controller
 import com.ivianuu.conductor.ControllerChangeHandler
 

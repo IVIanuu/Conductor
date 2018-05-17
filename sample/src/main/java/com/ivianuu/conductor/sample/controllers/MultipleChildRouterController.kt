@@ -1,15 +1,13 @@
 package com.ivianuu.conductor.sample.controllers
 
 import android.view.View
-import android.view.ViewGroup
 import com.ivianuu.conductor.RouterTransaction
 import com.ivianuu.conductor.sample.R
 import com.ivianuu.conductor.sample.controllers.NavigationDemoController.DisplayUpMode
 import com.ivianuu.conductor.sample.controllers.base.BaseController
+import kotlinx.android.synthetic.main.controller_multiple_child_routers.*
 
 class MultipleChildRouterController : BaseController() {
-
-    private val childContainers = mutableListOf<ViewGroup>()
 
     override val title: String?
         get() = "Child Router Demo"
@@ -18,11 +16,7 @@ class MultipleChildRouterController : BaseController() {
         get() = R.layout.controller_multiple_child_routers
 
     override fun onViewCreated(view: View) {
-        childContainers.add(view.findViewById(R.id.container_0))
-        childContainers.add(view.findViewById(R.id.container_1))
-        childContainers.add(view.findViewById(R.id.container_2))
-
-        for (childContainer in childContainers) {
+        for (childContainer in listOf(container_0, container_1, container_2)) {
             val childRouter = getChildRouter(childContainer).apply {
                 popsLastView = false
             }
