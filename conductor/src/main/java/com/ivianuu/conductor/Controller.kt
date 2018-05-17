@@ -482,6 +482,11 @@ abstract class Controller @JvmOverloads protected constructor(args: Bundle? = nu
     fun requireActivity() = activity ?: throw IllegalStateException("activity is not attached")
 
     /**
+     * Returns the resources if attached or throws an exception
+     */
+    fun requireResources() = resources ?: throw IllegalStateException("activity is not attached")
+
+    /**
      * Returns the router if attached or throws an exception
      */
     fun requireRouter() = router ?: throw IllegalStateException("router is not attached")
@@ -718,7 +723,7 @@ abstract class Controller @JvmOverloads protected constructor(args: Bundle? = nu
         if (view == null) {
             notifyLifecycleListeners { it.preCreateView(this) }
 
-            val view = onCreateView(LayoutInflater.from(parent.context), parent, viewState)
+            val view = onCreateView(LayoutInflater.from(activity), parent, viewState)
             this.view = view
 
             if (view == parent) {
