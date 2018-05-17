@@ -9,7 +9,6 @@ import android.view.View
 import android.view.ViewGroup
 import com.ivianuu.conductor.Controller
 import com.ivianuu.conductor.sample.MainActivity
-import com.ivianuu.conductor.sample.util.LoggingLifecycleListener
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.*
 
@@ -37,7 +36,7 @@ abstract class BaseController : Controller, LayoutContainer, ViewModelStoreOwner
     protected constructor(args: Bundle) : super(args) {}
 
     init {
-        addLifecycleListener(LoggingLifecycleListener())
+      //  addLifecycleListener(LoggingLifecycleListener())
     }
 
     override fun onCreateView(

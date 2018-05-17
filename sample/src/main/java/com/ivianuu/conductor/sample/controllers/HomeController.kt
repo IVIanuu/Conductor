@@ -18,6 +18,7 @@ import com.ivianuu.conductor.ControllerChangeHandler
 import com.ivianuu.conductor.ControllerChangeType
 import com.ivianuu.conductor.RouterTransaction
 import com.ivianuu.conductor.changehandler.FadeChangeHandler
+import com.ivianuu.conductor.changehandler.HorizontalChangeHandler
 import com.ivianuu.conductor.changehandler.TransitionChangeHandlerCompat
 import com.ivianuu.conductor.sample.R
 import com.ivianuu.conductor.sample.changehandler.ArcFadeMoveChangeHandlerCompat
@@ -40,7 +41,8 @@ class HomeController : BaseController() {
         CHILD_CONTROLLERS("Child Controllers", R.color.orange_300),
         MULTIPLE_CHILD_ROUTERS("Multiple Child Routers", R.color.deep_orange_300),
         MASTER_DETAIL("Master Detail", R.color.grey_300),
-        DRAG_DISMISS("Drag Dismiss", R.color.lime_300)
+        DRAG_DISMISS("Drag Dismiss", R.color.lime_300),
+        TEST("Test", R.color.material_grey_300)
     }
 
     override val layoutRes = R.layout.controller_home
@@ -195,6 +197,11 @@ class HomeController : BaseController() {
                 RouterTransaction.with(MasterDetailListController())
                     .pushChangeHandler(FadeChangeHandler())
                     .popChangeHandler(FadeChangeHandler())
+            )
+            DemoModel.TEST -> requireRouter().pushController(
+                RouterTransaction.with(TestController())
+                    .pushChangeHandler(HorizontalChangeHandler())
+                    .popChangeHandler(HorizontalChangeHandler())
             )
         }
     }

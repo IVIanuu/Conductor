@@ -124,7 +124,7 @@ abstract class Controller @JvmOverloads protected constructor(args: Bundle? = nu
 
                 val view = view
                 if (!value && view != null && viewWasDetached) {
-                    detach(view, false, false)
+                    detach(view, false, false, true)
                 }
             }
         }
@@ -145,7 +145,7 @@ abstract class Controller @JvmOverloads protected constructor(args: Bundle? = nu
         set(value) {
             field = value
             if (this.retainViewMode == RetainViewMode.RELEASE_DETACH && !isAttached) {
-                removeViewReference()
+                removeViewReference(true)
             }
         }
 
@@ -608,7 +608,7 @@ abstract class Controller @JvmOverloads protected constructor(args: Bundle? = nu
 
     internal fun activityDestroyed(activity: Activity) {
         if (activity.isChangingConfigurations) {
-            view?.let { detach(it, true, false) }
+            view?.let { detach(it, true, false, false) }
         } else {
             destroy(true)
         }
@@ -643,7 +643,8 @@ abstract class Controller @JvmOverloads protected constructor(args: Bundle? = nu
         notifyLifecycleListeners { it.postAttach(this, view) }
     }
 
-    internal fun detach(view: View, forceViewRefRemoval: Boolean, blockViewRefRemoval: Boolean) {
+    internal fun detach(view: View, forceViewRefRemoval: Boolean, blockViewRefRemoval: Boolean, canRetainChildViews: Boolean) {
+        d { "detach force $forceViewRefRemoval, block $blockViewRefRemoval, can retain childs $canRetainChildViews" }
         if (!attachedToUnownedParent) {
             childRouters.forEach { it.prepareForHostDetach() }
         }
@@ -665,11 +666,12 @@ abstract class Controller @JvmOverloads protected constructor(args: Bundle? = nu
         }
 
         if (removeViewRef) {
-            removeViewReference()
+            removeViewReference(canRetainChildViews)
         }
     }
 
-    private fun removeViewReference() {
+    private fun removeViewReference(canRetainChildViews: Boolean) {
+        d { "remove view can retain $canRetainChildViews" }
         val view = view
         if (view != null) {
             if (!isBeingDestroyed && !hasSavedViewState) {
@@ -691,7 +693,7 @@ abstract class Controller @JvmOverloads protected constructor(args: Bundle? = nu
 
             notifyLifecycleListeners { it.postDestroyView(this) }
 
-            childRouters.forEach { it.removeHost() }
+            childRouters.forEach { it.removeHost(canRetainChildViews) }
         }
 
         if (isBeingDestroyed) {
@@ -701,12 +703,22 @@ abstract class Controller @JvmOverloads protected constructor(args: Bundle? = nu
 
     internal fun inflate(parent: ViewGroup): View {
         val oldView = view
-        if (oldView != null && oldView.parent != null && oldView.parent != parent) {
-            detach(oldView, true, false)
-            removeViewReference()
+        if (oldView != null
+            && oldView.parent != null
+            && oldView.parent != parent) {
+            d { "parent has switched" }
+            val forceRemoval = retainViewMode == RetainViewMode.RELEASE_DETACH
+            detach(oldView, forceRemoval, false, true)
+            if (retainViewMode != RetainViewMode.RETAIN_DETACH) {
+                d { "remove view ref" }
+                removeViewReference(true)
+            } else {
+                (oldView.parent as ViewGroup).removeView(oldView)
+            }
         }
 
         if (view == null) {
+            d { "inflate new view" }
             notifyLifecycleListeners { it.preCreateView(this) }
 
             val view = onCreateView(LayoutInflater.from(parent.context), parent, viewState)
@@ -732,13 +744,13 @@ abstract class Controller @JvmOverloads protected constructor(args: Bundle? = nu
                     viewWasDetached = true
 
                     if (!isDetachFrozen) {
-                        detach(view, false, fromActivityStop)
+                        detach(view, false, fromActivityStop, true)
                     }
                 }
 
                 override fun onViewDetachAfterStop() {
                     if (!isDetachFrozen) {
-                        detach(view, false, false)
+                        detach(view, false, false, true)
                     }
                 }
             })
@@ -799,9 +811,9 @@ abstract class Controller @JvmOverloads protected constructor(args: Bundle? = nu
         childRouters.forEach { it.destroy(false) }
 
         if (!isAttached) {
-            removeViewReference()
+            removeViewReference(false)
         } else if (removeViews) {
-            view?.let { detach(it, true, false) }
+            view?.let { detach(it, true, false, false) }
         }
     }
 

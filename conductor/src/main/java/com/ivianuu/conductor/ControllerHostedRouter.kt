@@ -57,7 +57,7 @@ internal class ControllerHostedRouter : Router {
 
     fun setHost(controller: Controller, container: ViewGroup) {
         if (hostController != controller || this.container != container) {
-            removeHost()
+            removeHost(true)
 
             if (container is ControllerChangeListener) {
                 addChangeListener(container)
@@ -72,7 +72,7 @@ internal class ControllerHostedRouter : Router {
         }
     }
 
-    fun removeHost() {
+    fun removeHost(canRetainChildViews: Boolean) {
         container?.let {
             if (it is ControllerChangeListener) {
                 removeChangeListener(it)
@@ -82,13 +82,13 @@ internal class ControllerHostedRouter : Router {
         destroyingControllers
             .filter { it.view != null }
             .map { it to it.requireView() }
-            .forEach { it.first.detach(it.second, true, false) }
+            .forEach { it.first.detach(it.second, true, false, false) }
 
         backstack
             .map { it.controller }
             .filter { it.view != null }
             .map { it to it.requireView() }
-            .forEach { it.first.detach(it.second, true, false) }
+            .forEach { it.first.detach(it.second, !canRetainChildViews, false, canRetainChildViews) }
 
         prepareForContainerRemoval()
 
@@ -120,7 +120,7 @@ internal class ControllerHostedRouter : Router {
 
     override fun onActivityDestroyed(activity: Activity) {
         super.onActivityDestroyed(activity)
-        removeHost()
+        removeHost(false)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

@@ -663,7 +663,7 @@ abstract class Router {
 
         val fromView = fromController?.view
         if (forceDetachDestroy && fromView != null) {
-            fromController.detach(fromView, true, false)
+            fromController.detach(fromView, true, false, false)
         }
     }
 
