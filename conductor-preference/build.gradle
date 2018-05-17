@@ -14,18 +14,19 @@
  * limitations under the License.
  */
 
-apply plugin: 'com.android.application'
+apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
+apply plugin: 'com.github.dcendents.android-maven'
+
+group='com.github.ivianuu'
 
 android {
     compileSdkVersion Versions.compileSdk
+
     defaultConfig {
-        applicationId "com.ivianuu.conductor.sample"
-        minSdkVersion 21
+        minSdkVersion Versions.minSdk
         targetSdkVersion Versions.targetSdk
-        versionCode Versions.versionCode
-        versionName Versions.versionName
     }
     androidExtensions {
         experimental = true
@@ -33,12 +34,32 @@ android {
 }
 
 dependencies {
-    implementation Deps.supportAppCompat
-    implementation Deps.supportDesign
-    implementation Deps.supportRecyclerView
+    api project(':conductor')
 
-    implementation Deps.ktx
+    api Deps.kotlinStdLib
+    api Deps.supportPreference
+}
 
-    implementation project(':conductor')
-    implementation project(':conductor-preference')
+// build a jar with source files
+task sourcesJar(type: Jar) {
+    from android.sourceSets.main.java.srcDirs
+    classifier = 'sources'
+}
+
+task javadoc(type: Javadoc) {
+    failOnError  false
+    source = android.sourceSets.main.java.sourceFiles
+    classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
+    classpath += configurations.compile
+}
+
+// build a jar with javadoc
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+}
+
+artifacts {
+    archives sourcesJar
+    archives javadocJar
 }

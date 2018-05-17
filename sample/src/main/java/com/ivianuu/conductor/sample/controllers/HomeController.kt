@@ -20,9 +20,11 @@ import com.ivianuu.conductor.RouterTransaction
 import com.ivianuu.conductor.changehandler.FadeChangeHandler
 import com.ivianuu.conductor.changehandler.HorizontalChangeHandler
 import com.ivianuu.conductor.changehandler.TransitionChangeHandlerCompat
+import com.ivianuu.conductor.changehandler.VerticalChangeHandler
 import com.ivianuu.conductor.sample.R
 import com.ivianuu.conductor.sample.changehandler.ArcFadeMoveChangeHandlerCompat
 import com.ivianuu.conductor.sample.changehandler.FabToDialogTransitionChangeHandler
+import com.ivianuu.conductor.sample.controllers.HomeController.DemoModel.*
 import com.ivianuu.conductor.sample.controllers.NavigationDemoController.DisplayUpMode
 import com.ivianuu.conductor.sample.controllers.base.BaseController
 import com.ivianuu.conductor.sample.util.KtViewHolder
@@ -42,7 +44,8 @@ class HomeController : BaseController() {
         VIEW_PAGER("ViewPager", R.color.green_300),
         MULTIPLE_CHILD_ROUTERS("Multiple Child Routers", R.color.deep_orange_300),
         MASTER_DETAIL("Master Detail", R.color.grey_300),
-        DRAG_DISMISS("Drag Dismiss", R.color.lime_300),
+        DRAG_DISMISS("Drag Dismiss", R.color.blue_300),
+        PREFS("Preferences", R.color.lime_300),
         TEST("Test", R.color.material_grey_300)
     }
 
@@ -57,7 +60,7 @@ class HomeController : BaseController() {
         recycler_view.layoutManager = LinearLayoutManager(view.context)
         recycler_view.adapter = HomeAdapter(
             LayoutInflater.from(view.context),
-            DemoModel.values()
+            values()
         )
 
         fab.setOnClickListener { onFabClicked(true) }
@@ -140,7 +143,7 @@ class HomeController : BaseController() {
 
     fun onModelRowClick(model: DemoModel?, position: Int) {
         when (model) {
-            HomeController.DemoModel.NAVIGATION -> requireRouter().pushController(
+            NAVIGATION -> requireRouter().pushController(
                 RouterTransaction.with(
                     NavigationDemoController(
                         0,
@@ -151,23 +154,23 @@ class HomeController : BaseController() {
                     .popChangeHandler(FadeChangeHandler())
                     .tag(NavigationDemoController.TAG_UP_TRANSACTION)
             )
-            HomeController.DemoModel.TRANSITIONS -> requireRouter().pushController(
+            TRANSITIONS -> requireRouter().pushController(
                 TransitionDemoController.getRouterTransaction(
                     0,
                     this
                 )
             )
-            HomeController.DemoModel.CHILD_CONTROLLERS -> requireRouter().pushController(
+            CHILD_CONTROLLERS -> requireRouter().pushController(
                 RouterTransaction.with(ParentController())
                     .pushChangeHandler(FadeChangeHandler())
                     .popChangeHandler(FadeChangeHandler())
             )
-            HomeController.DemoModel.VIEW_PAGER -> requireRouter().pushController(
+            VIEW_PAGER -> requireRouter().pushController(
                 RouterTransaction.with(PagerController())
                     .pushChangeHandler(FadeChangeHandler())
                     .popChangeHandler(FadeChangeHandler())
             )
-            HomeController.DemoModel.SHARED_ELEMENT_TRANSITIONS -> {
+            SHARED_ELEMENT_TRANSITIONS -> {
                 val titleSharedElementName =
                     resources!!.getString(R.string.transition_tag_title_indexed, position)
                 val dotSharedElementName =
@@ -189,22 +192,27 @@ class HomeController : BaseController() {
                         )
                 )
             }
-            HomeController.DemoModel.DRAG_DISMISS -> requireRouter().pushController(
+            DRAG_DISMISS -> requireRouter().pushController(
                 RouterTransaction.with(DragDismissController())
                     .pushChangeHandler(FadeChangeHandler(removesFromViewOnPush = false))
                     .popChangeHandler(FadeChangeHandler())
             )
-            HomeController.DemoModel.MULTIPLE_CHILD_ROUTERS -> requireRouter().pushController(
+            MULTIPLE_CHILD_ROUTERS -> requireRouter().pushController(
                 RouterTransaction.with(MultipleChildRouterController())
                     .pushChangeHandler(FadeChangeHandler())
                     .popChangeHandler(FadeChangeHandler())
             )
-            HomeController.DemoModel.MASTER_DETAIL -> requireRouter().pushController(
+            MASTER_DETAIL -> requireRouter().pushController(
                 RouterTransaction.with(MasterDetailListController())
                     .pushChangeHandler(FadeChangeHandler())
                     .popChangeHandler(FadeChangeHandler())
             )
-            DemoModel.TEST -> requireRouter().pushController(
+            PREFS -> requireRouter().pushController(
+                RouterTransaction.with(PreferenceController())
+                    .pushChangeHandler(VerticalChangeHandler())
+                    .popChangeHandler(VerticalChangeHandler())
+            )
+            TEST -> requireRouter().pushController(
                 RouterTransaction.with(TestController())
                     .pushChangeHandler(HorizontalChangeHandler())
                     .popChangeHandler(HorizontalChangeHandler())
