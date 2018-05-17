@@ -20,7 +20,6 @@ import com.ivianuu.conductor.RouterTransaction
 import com.ivianuu.conductor.changehandler.FadeChangeHandler
 import com.ivianuu.conductor.changehandler.HorizontalChangeHandler
 import com.ivianuu.conductor.changehandler.TransitionChangeHandlerCompat
-import com.ivianuu.conductor.changehandler.VerticalChangeHandler
 import com.ivianuu.conductor.sample.R
 import com.ivianuu.conductor.sample.changehandler.ArcFadeMoveChangeHandlerCompat
 import com.ivianuu.conductor.sample.changehandler.FabToDialogTransitionChangeHandler
@@ -209,8 +208,8 @@ class HomeController : BaseController() {
             )
             PREFS -> requireRouter().pushController(
                 RouterTransaction.with(PreferenceController())
-                    .pushChangeHandler(VerticalChangeHandler())
-                    .popChangeHandler(VerticalChangeHandler())
+                    .pushChangeHandler(FadeChangeHandler())
+                    .popChangeHandler(FadeChangeHandler())
             )
             TEST -> requireRouter().pushController(
                 RouterTransaction.with(TestController())
