@@ -39,6 +39,7 @@ class HomeController : BaseController() {
         TRANSITIONS("Transition Demos", R.color.blue_grey_300),
         SHARED_ELEMENT_TRANSITIONS("Shared Element Demos", R.color.purple_300),
         CHILD_CONTROLLERS("Child Controllers", R.color.orange_300),
+        VIEW_PAGER("ViewPager", R.color.green_300),
         MULTIPLE_CHILD_ROUTERS("Multiple Child Routers", R.color.deep_orange_300),
         MASTER_DETAIL("Master Detail", R.color.grey_300),
         DRAG_DISMISS("Drag Dismiss", R.color.lime_300),
@@ -158,6 +159,11 @@ class HomeController : BaseController() {
             )
             HomeController.DemoModel.CHILD_CONTROLLERS -> requireRouter().pushController(
                 RouterTransaction.with(ParentController())
+                    .pushChangeHandler(FadeChangeHandler())
+                    .popChangeHandler(FadeChangeHandler())
+            )
+            HomeController.DemoModel.VIEW_PAGER -> requireRouter().pushController(
+                RouterTransaction.with(PagerController())
                     .pushChangeHandler(FadeChangeHandler())
                     .popChangeHandler(FadeChangeHandler())
             )
