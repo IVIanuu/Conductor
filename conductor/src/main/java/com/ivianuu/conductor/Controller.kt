@@ -713,6 +713,8 @@ abstract class Controller @JvmOverloads protected constructor(args: Bundle? = nu
                 d { "remove view ref" }
                 removeViewReference(true)
             } else {
+                // were retaining our view to make sure that were getting attached to the new container
+                // we have to remove the view from the old one
                 (oldView.parent as ViewGroup).removeView(oldView)
             }
         }
