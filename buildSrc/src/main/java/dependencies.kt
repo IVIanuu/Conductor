@@ -30,5 +30,6 @@ object Deps {
     const val supportAppCompat = "com.android.support:appcompat-v7:${Versions.support}"
     const val supportDesign = "com.android.support:design:${Versions.support}"
     const val supportFragments = "com.android.support:support-fragment:${Versions.support}"
+    const val supportPreference = "com.android.support:preference-v7:${Versions.support}"
     const val supportRecyclerView = "com.android.support:recyclerview-v7:${Versions.support}"
 }
