@@ -348,6 +348,9 @@ class LifecycleHandler : Fragment(), ActivityLifecycleCallbacks {
                             .findFragmentByTag(FRAGMENT_TAG) as LifecycleHandler?
             }
 
+            lifecycleHandler?.registerActivityListener(activity)
+
+
             return lifecycleHandler
         }
     }
