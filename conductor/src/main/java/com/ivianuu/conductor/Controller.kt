@@ -272,6 +272,13 @@ abstract class Controller @JvmOverloads protected constructor(args: Bundle? = nu
         }
     }
 
+    /**
+     * Returns all of this Controller's child Routers
+     */
+    fun getChildRouters(): List<Router> {
+        return childRouters.toList()
+    }
+
     internal fun findController(instanceId: String): Controller? {
         if (this.instanceId == instanceId) {
             return this
@@ -280,13 +287,6 @@ abstract class Controller @JvmOverloads protected constructor(args: Bundle? = nu
         return childRouters
             .map { it.getControllerWithInstanceId(instanceId) }
             .firstOrNull()
-    }
-
-    /**
-     * Returns all of this Controller's child Routers
-     */
-    fun getChildRouters(): List<Router> {
-        return childRouters.toList()
     }
 
     /**
