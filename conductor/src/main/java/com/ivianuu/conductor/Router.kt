@@ -53,7 +53,7 @@ abstract class Router {
 
             val backstackIterator = backstack.reverseIterator()
             while (backstackIterator.hasNext()) {
-                controllers.add(backstackIterator.next().controller)
+                controllers.add(backstackIterator.next().controller())
             }
 
             return controllers
@@ -92,7 +92,7 @@ abstract class Router {
         ensureMainThread()
 
         if (!backstack.isEmpty) {
-            if (backstack.peek()?.controller?.handleBack() == true) {
+            if (backstack.peek()?.controller()?.handleBack() == true) {
                 return true
             } else if (popCurrentController()) {
                 return true
@@ -110,7 +110,7 @@ abstract class Router {
 
         val transaction = backstack.peek()
                 ?: throw IllegalStateException("Trying to pop the current controller when there are none on the backstack.")
-        return popController(transaction.controller)
+        return popController(transaction.controller())
     }
 
     /**
@@ -121,7 +121,7 @@ abstract class Router {
 
         val topTransaction = backstack.peek()
         val poppingTopController =
-            topTransaction != null && topTransaction.controller == controller
+            topTransaction != null && topTransaction.controller() == controller
 
         if (poppingTopController) {
             trackDestroyingController(backstack.pop())
@@ -130,14 +130,14 @@ abstract class Router {
             var removedTransaction: RouterTransaction? = null
             var nextTransaction: RouterTransaction? = null
             for (transaction in backstack) {
-                if (transaction.controller == controller) {
+                if (transaction.controller() == controller) {
                     if (controller.isAttached) {
                         trackDestroyingController(transaction)
                     }
                     backstack.remove(transaction)
                     removedTransaction = transaction
                 } else if (removedTransaction != null) {
-                    if (!transaction.controller.isAttached) {
+                    if (!transaction.controller().isAttached) {
                         nextTransaction = transaction
                     }
                     break
@@ -178,9 +178,9 @@ abstract class Router {
             trackDestroyingController(backstack.pop())
         }
 
-        val handler = transaction.pushChangeHandler
+        val handler = transaction.pushChangeHandler()
         if (topTransaction != null) {
-            val pushChangeHandler = topTransaction.pushChangeHandler
+            val pushChangeHandler = topTransaction.pushChangeHandler()
             val oldHandlerRemovedViews =
                 pushChangeHandler == null || pushChangeHandler.removesFromViewOnPush
             val newHandlerRemovesViews = handler == null || handler.removesFromViewOnPush
@@ -204,7 +204,7 @@ abstract class Router {
 
         if (popViews && poppedControllers.isNotEmpty()) {
             val topTransaction = poppedControllers[0]
-            topTransaction.controller.addLifecycleListener(object : LifecycleListener() {
+            topTransaction.controller().addLifecycleListener(object : LifecycleListener() {
                 override fun onChangeEnd(
                     controller: Controller,
                     changeHandler: ControllerChangeHandler,
@@ -224,7 +224,7 @@ abstract class Router {
                 }
             })
 
-            performControllerChange(null, topTransaction, false, topTransaction.popChangeHandler)
+            performControllerChange(null, topTransaction, false, topTransaction.popChangeHandler())
         }
     }
 
@@ -254,7 +254,7 @@ abstract class Router {
         ensureMainThread()
 
         for (transaction in backstack) {
-            if (tag == transaction.tag) {
+            if (tag == transaction.tag()) {
                 popToTransaction(transaction, changeHandler)
                 return true
             }
@@ -270,7 +270,7 @@ abstract class Router {
         ensureMainThread()
 
         val transactions = listOf(transaction)
-        setBackstack(transactions, transaction.pushChangeHandler)
+        setBackstack(transactions, transaction.pushChangeHandler())
     }
 
     /**
@@ -279,7 +279,7 @@ abstract class Router {
      */
     fun getControllerWithInstanceId(instanceId: String): Controller? {
         return backstack
-            .map { it.controller }
+            .map { it.controller() }
             .firstOrNull {
                 val controllerWithId = it.findController(instanceId)
                 controllerWithId != null
@@ -292,8 +292,8 @@ abstract class Router {
      */
     fun getControllerWithTag(tag: String): Controller? {
         return backstack
-            .firstOrNull { it.tag == tag }
-            ?.controller
+            .firstOrNull { it.tag() == tag }
+            ?.controller()
     }
 
     /**
@@ -331,7 +331,7 @@ abstract class Router {
         while (backstackIterator.hasNext()) {
             val transaction = backstackIterator.next()
             transaction.onAttachedToRouter()
-            setControllerRouter(transaction.controller)
+            setControllerRouter(transaction.controller())
         }
 
         if (newBackstack.isNotEmpty()) {
@@ -350,10 +350,10 @@ abstract class Router {
                 val newRootTransaction = newVisibleTransactions[0]
 
                 // Replace the old root with the new one
-                if (oldRootTransaction == null || oldRootTransaction.controller != newRootTransaction.controller) {
+                if (oldRootTransaction == null || oldRootTransaction.controller() != newRootTransaction.controller()) {
                     // Ensure the existing root controller is fully pushed to the view hierarchy
                     if (oldRootTransaction != null) {
-                        ControllerChangeHandler.completeHandlerImmediately(oldRootTransaction.controller.instanceId)
+                        ControllerChangeHandler.completeHandlerImmediately(oldRootTransaction.controller().instanceId)
                     }
                     performControllerChange(
                         newRootTransaction,
@@ -369,7 +369,7 @@ abstract class Router {
                     if (!newVisibleTransactions.contains(transaction)) {
                         val localHandler = changeHandler?.copy() ?: SimpleSwapChangeHandler()
                         localHandler.forceRemoveViewOnPush = true
-                        ControllerChangeHandler.completeHandlerImmediately(transaction.controller.instanceId)
+                        ControllerChangeHandler.completeHandlerImmediately(transaction.controller().instanceId)
                         performControllerChange(
                             null,
                             transaction,
@@ -387,7 +387,7 @@ abstract class Router {
                             transaction,
                             newVisibleTransactions[i - 1],
                             true,
-                            transaction.pushChangeHandler
+                            transaction.pushChangeHandler()
                         )
                     }
                 }
@@ -401,14 +401,14 @@ abstract class Router {
         for (oldTransaction in oldTransactions) {
             var contains = false
             for (newTransaction in newBackstack) {
-                if (oldTransaction.controller == newTransaction.controller) {
+                if (oldTransaction.controller() == newTransaction.controller()) {
                     contains = true
                     break
                 }
             }
 
             if (!contains) {
-                oldTransaction.controller.destroy()
+                oldTransaction.controller().destroy()
             }
         }
     }
@@ -446,7 +446,7 @@ abstract class Router {
         while (backstackIterator.hasNext()) {
             val transaction = backstackIterator.next()
 
-            if (transaction.controller.needsAttach) {
+            if (transaction.controller().needsAttach) {
                 performControllerChange(transaction, null, true, SimpleSwapChangeHandler(false))
             }
         }
@@ -459,7 +459,7 @@ abstract class Router {
 
     fun onActivityStarted(activity: Activity) {
         backstack
-            .map { it.controller }
+            .map { it.controller() }
             .forEach {
                 it.activityStarted(activity)
                 it.childRouters.forEach { it.onActivityStarted(activity) }
@@ -468,7 +468,7 @@ abstract class Router {
 
     fun onActivityResumed(activity: Activity) {
         backstack
-            .map { it.controller }
+            .map { it.controller() }
             .forEach {
                 it.activityResumed(activity)
                 it.childRouters.forEach { it.onActivityResumed(activity) }
@@ -477,7 +477,7 @@ abstract class Router {
 
     fun onActivityPaused(activity: Activity) {
         backstack
-            .map { it.controller }
+            .map { it.controller() }
             .forEach {
                 it.activityPaused(activity)
                 it.childRouters.forEach { it.onActivityPaused(activity) }
@@ -486,7 +486,7 @@ abstract class Router {
 
     fun onActivityStopped(activity: Activity) {
         backstack
-            .map { it.controller }
+            .map { it.controller() }
             .forEach {
                 it.activityStopped(activity)
                 it.childRouters.forEach { it.onActivityStopped(activity) }
@@ -498,7 +498,7 @@ abstract class Router {
         changeListeners.clear()
 
         backstack
-            .map { it.controller }
+            .map { it.controller() }
             .forEach {
                 it.activityDestroyed(activity)
                 it.childRouters.forEach { it.onActivityDestroyed(activity) }
@@ -516,10 +516,10 @@ abstract class Router {
 
     internal fun prepareForHostDetach() {
         for (transaction in backstack) {
-            if (ControllerChangeHandler.completeHandlerImmediately(transaction.controller.instanceId)) {
-                transaction.controller.needsAttach = true
+            if (ControllerChangeHandler.completeHandlerImmediately(transaction.controller().instanceId)) {
+                transaction.controller().needsAttach = true
             }
-            transaction.controller.prepareForHostDetach()
+            transaction.controller().prepareForHostDetach()
         }
     }
 
@@ -541,13 +541,13 @@ abstract class Router {
 
         val backstackIterator = backstack.reverseIterator()
         while (backstackIterator.hasNext()) {
-            setControllerRouter(backstackIterator.next().controller)
+            setControllerRouter(backstackIterator.next().controller())
         }
     }
 
     fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         backstack
-            .map { it.controller }
+            .map { it.controller() }
             .forEach {
                 it.createOptionsMenu(menu, inflater)
                 it.childRouters.forEach { it.onCreateOptionsMenu(menu, inflater) }
@@ -556,7 +556,7 @@ abstract class Router {
 
     fun onPrepareOptionsMenu(menu: Menu) {
         backstack
-            .map { it.controller }
+            .map { it.controller() }
             .forEach {
                 it.prepareOptionsMenu(menu)
                 it.childRouters.forEach { it.onPrepareOptionsMenu(menu) }
@@ -565,7 +565,7 @@ abstract class Router {
 
     fun onOptionsItemSelected(item: MenuItem): Boolean {
         return backstack
-            .map { it.controller }
+            .map { it.controller() }
             .any {
                 it.optionsItemSelected(item)
                         || it.childRouters
@@ -592,7 +592,7 @@ abstract class Router {
             }
 
             if (changeHandler == null) {
-                changeHandler = topTransaction?.popChangeHandler
+                changeHandler = topTransaction?.popChangeHandler()
             }
 
             setBackstack(updatedBackstack, changeHandler)
@@ -609,12 +609,12 @@ abstract class Router {
     }
 
     internal fun onContextAvailable() {
-        backstack.forEach { it.controller.onContextAvailable() }
+        backstack.forEach { it.controller().onContextAvailable() }
     }
 
     fun handleRequestedPermission(permission: String): Boolean {
         return backstack
-            .map { it.controller }
+            .map { it.controller() }
             .filter { it.didRequestPermission(permission) }
             .filter { it.shouldShowRequestPermissionRationale(permission) }
             .any()
@@ -630,8 +630,8 @@ abstract class Router {
         }
 
         val changeHandler = when {
-            isPush && to != null -> to.pushChangeHandler
-            from != null -> from.popChangeHandler
+            isPush && to != null -> to.pushChangeHandler()
+            from != null -> from.popChangeHandler()
             else -> null
         }
 
@@ -645,8 +645,8 @@ abstract class Router {
         changeHandler: ControllerChangeHandler?
     ) {
         var changeHandler = changeHandler
-        val toController = to?.controller
-        val fromController = from?.controller
+        val toController = to?.controller()
+        val fromController = from?.controller()
         var forceDetachDestroy = false
 
         if (to != null && toController != null) {
@@ -715,10 +715,10 @@ abstract class Router {
     }
 
     private fun trackDestroyingController(transaction: RouterTransaction) {
-        if (!transaction.controller.isDestroyed) {
-            destroyingControllers.add(transaction.controller)
+        if (!transaction.controller().isDestroyed) {
+            destroyingControllers.add(transaction.controller())
 
-            transaction.controller.addLifecycleListener(object : LifecycleListener() {
+            transaction.controller().addLifecycleListener(object : LifecycleListener() {
                 override fun postDestroy(controller: Controller) {
                     destroyingControllers.remove(controller)
                 }
@@ -734,7 +734,7 @@ abstract class Router {
         val views = mutableListOf<View>()
 
         getVisibleTransactions(backstack.iterator())
-            .mapNotNull { it.controller.view }
+            .mapNotNull { it.controller().view }
             .forEach { views.add(it) }
 
         siblingRouters
@@ -784,7 +784,7 @@ abstract class Router {
             val transaction = backstackIterator.next()
             transactions.add(transaction)
 
-            val pushChangeHandler = transaction.pushChangeHandler
+            val pushChangeHandler = transaction.pushChangeHandler()
             if (pushChangeHandler == null || pushChangeHandler.removesFromViewOnPush) {
                 break
             }
@@ -803,7 +803,7 @@ abstract class Router {
         }
 
         for (i in rhs.indices) {
-            if (rhs[i].controller != lhs[i].controller) {
+            if (rhs[i].controller() != lhs[i].controller()) {
                 return false
             }
         }

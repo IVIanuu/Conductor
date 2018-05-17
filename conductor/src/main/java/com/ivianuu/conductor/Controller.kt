@@ -493,7 +493,7 @@ abstract class Controller @JvmOverloads protected constructor(args: Bundle? = nu
         return childRouters
             .flatMap { it.backstack }
             .sortedByDescending { it.transactionIndex }
-            .map { it.controller }
+            .map { it.controller() }
             .any { it.isAttached && it.requireRouter().handleBack() }
     }
 

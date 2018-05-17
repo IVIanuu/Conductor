@@ -9,48 +9,10 @@ import com.ivianuu.conductor.internal.TransactionIndexer
  */
 class RouterTransaction {
 
-    val controller: Controller
-
-    var tag: String?
-        set(value) {
-            if (!attachedToRouter) {
-                field = value
-            } else {
-                throw RuntimeException(javaClass.simpleName + "s can not be modified after being added to a Router.")
-            }
-        }
-
-    var pushChangeHandler: ControllerChangeHandler?
-        set(value) {
-            if (!attachedToRouter) {
-                field = value
-            } else {
-                throw RuntimeException(javaClass.simpleName + "s can not be modified after being added to a Router.")
-            }
-        }
-        get() {
-            var handler = controller.overriddenPushHandler
-            if (handler == null) {
-                handler = field
-            }
-            return handler
-        }
-
-    var popChangeHandler: ControllerChangeHandler?
-        set(value) {
-            if (!attachedToRouter) {
-                field = value
-            } else {
-                throw RuntimeException(javaClass.simpleName + "s can not be modified after being added to a Router.")
-            }
-        }
-        get() {
-            var handler = controller.overriddenPopHandler
-            if (handler == null) {
-                handler = field
-            }
-            return handler
-        }
+    private val controller: Controller
+    private var tag: String? = null
+    private var pushChangeHandler: ControllerChangeHandler?
+    private var popChangeHandler: ControllerChangeHandler?
 
     private var attachedToRouter = false
     internal var transactionIndex = INVALID_INDEX
@@ -77,19 +39,51 @@ class RouterTransaction {
         attachedToRouter = true
     }
 
+    fun controller() = controller
+
     fun tag(tag: String?): RouterTransaction {
-        this.tag = tag
+        if (!attachedToRouter) {
+            this.tag = tag
+        } else {
+            throw RuntimeException(javaClass.simpleName + "s can not be modified after being added to a Router.")
+        }
         return this
     }
 
+    fun tag() = tag
+
     fun pushChangeHandler(handler: ControllerChangeHandler?): RouterTransaction {
-        pushChangeHandler = handler
+        if (!attachedToRouter) {
+            pushChangeHandler = handler
+        } else {
+            throw RuntimeException(javaClass.simpleName + "s can not be modified after being added to a Router.")
+        }
         return this
+    }
+
+    fun pushChangeHandler(): ControllerChangeHandler? {
+        var handler = controller.overriddenPushHandler
+        if (handler == null) {
+            handler = pushChangeHandler
+        }
+        return handler
     }
 
     fun popChangeHandler(handler: ControllerChangeHandler?): RouterTransaction {
-        popChangeHandler = handler
+        if (!attachedToRouter) {
+            popChangeHandler = handler
+        } else {
+            throw RuntimeException(javaClass.simpleName + "s can not be modified after being added to a Router.")
+        }
         return this
+    }
+
+    fun popChangeHandler(): ControllerChangeHandler? {
+        var handler = controller.overriddenPopHandler
+        if (handler == null) {
+            handler = popChangeHandler
+        }
+        return handler
     }
 
     internal fun ensureValidIndex(indexer: TransactionIndexer?) {

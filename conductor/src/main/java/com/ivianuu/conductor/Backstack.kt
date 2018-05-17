@@ -28,7 +28,7 @@ internal class Backstack : Iterable<RouterTransaction> {
 
     fun pop(): RouterTransaction {
         val popped = backstack.pop()
-        popped.controller.destroy()
+        popped.controller().destroy()
         return popped
     }
 

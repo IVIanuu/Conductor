@@ -45,7 +45,7 @@ internal class ControllerHostedRouter : Router {
     internal var isDetachFrozen = false
         set(value) {
             field = value
-            backstack.forEach { it.controller.isDetachFrozen = value }
+            backstack.forEach { it.controller().isDetachFrozen = value }
         }
 
     constructor()
@@ -66,7 +66,7 @@ internal class ControllerHostedRouter : Router {
             hostController = controller
             this.container = container
 
-            backstack.forEach { it.controller.parentController = controller }
+            backstack.forEach { it.controller().parentController = controller }
 
             watchContainerAttach()
         }
@@ -85,7 +85,7 @@ internal class ControllerHostedRouter : Router {
             .forEach { it.first.detach(it.second, true, false, false) }
 
         backstack
-            .map { it.controller }
+            .map { it.controller() }
             .filter { it.view != null }
             .map { it to it.requireView() }
             .forEach { it.first.detach(it.second, !canRetainChildViews, false, canRetainChildViews) }
@@ -103,7 +103,7 @@ internal class ControllerHostedRouter : Router {
 
     override fun pushToBackstack(entry: RouterTransaction) {
         if (isDetachFrozen) {
-            entry.controller.isDetachFrozen = true
+            entry.controller().isDetachFrozen = true
         }
         super.pushToBackstack(entry)
     }
@@ -113,7 +113,7 @@ internal class ControllerHostedRouter : Router {
         changeHandler: ControllerChangeHandler?
     ) {
         if (isDetachFrozen) {
-            newBackstack.forEach { it.controller.isDetachFrozen = true }
+            newBackstack.forEach { it.controller().isDetachFrozen = true }
         }
         super.setBackstack(newBackstack, changeHandler)
     }
