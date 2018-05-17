@@ -644,7 +644,6 @@ abstract class Controller @JvmOverloads protected constructor(args: Bundle? = nu
     }
 
     internal fun detach(view: View, forceViewRefRemoval: Boolean, blockViewRefRemoval: Boolean, canRetainChildViews: Boolean) {
-        d { "detach force $forceViewRefRemoval, block $blockViewRefRemoval, can retain childs $canRetainChildViews" }
         if (!attachedToUnownedParent) {
             childRouters.forEach { it.prepareForHostDetach() }
         }
@@ -671,7 +670,6 @@ abstract class Controller @JvmOverloads protected constructor(args: Bundle? = nu
     }
 
     private fun removeViewReference(canRetainChildViews: Boolean) {
-        d { "remove view can retain $canRetainChildViews" }
         val view = view
         if (view != null) {
             if (!isBeingDestroyed && !hasSavedViewState) {
@@ -706,11 +704,9 @@ abstract class Controller @JvmOverloads protected constructor(args: Bundle? = nu
         if (oldView != null
             && oldView.parent != null
             && oldView.parent != parent) {
-            d { "parent has switched" }
             val forceRemoval = retainViewMode == RetainViewMode.RELEASE_DETACH
             detach(oldView, forceRemoval, false, true)
             if (retainViewMode != RetainViewMode.RETAIN_DETACH) {
-                d { "remove view ref" }
                 removeViewReference(true)
             } else {
                 // were retaining our view to make sure that were getting attached to the new container
@@ -720,7 +716,6 @@ abstract class Controller @JvmOverloads protected constructor(args: Bundle? = nu
         }
 
         if (view == null) {
-            d { "inflate new view" }
             notifyLifecycleListeners { it.preCreateView(this) }
 
             val view = onCreateView(LayoutInflater.from(parent.context), parent, viewState)
